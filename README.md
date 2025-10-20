@@ -1,6 +1,19 @@
-Hey Cortana# Curve & Fuel - Premium AI Health Coach App
+# Curve & Fuel - Premium AI Health Coach App
 
 A stunning, $1M+ quality Android application for waist-to-hip ratio tracking, calorie management, and AI-powered health coaching. Built with Jetpack Compose and modern Android architecture.
+
+## 🛠️ Tech Stack
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
+  <img src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="Jetpack Compose" />
+  <img src="https://img.shields.io/badge/Hilt-0091EA?style=for-the-badge&logo=hilt&logoColor=white" alt="Hilt" />
+  <img src="https://img.shields.io/badge/Room-FF6D00?style=for-the-badge&logo=android&logoColor=white" alt="Room" />
+  <img src="https://img.shields.io/badge/Coroutines-00D4AA?style=for-the-badge&logo=kotlin&logoColor=white" alt="Coroutines" />
+  <img src="https://img.shields.io/badge/CameraX-4285F4?style=for-the-badge&logo=android&logoColor=white" alt="CameraX" />
+  <img src="https://img.shields.io/badge/ML%20Kit-FF6D00?style=for-the-badge&logo=firebase&logoColor=white" alt="ML Kit" />
+</p>
 
 ## 🎨 Design Philosophy
 
@@ -358,9 +371,3 @@ Copyright © 2024 KreggsCode. All rights reserved.
 ## 👨‍💻 Developer
 
 Built with ❤️ by KreggsCode
-
----
-
-**Package**: `com.kreggscode.waisttohip`  
-**Version**: 1.0.0  
-**Build**: Release Candidate
