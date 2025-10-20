@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Ice cream scoop icon -->
+    <group
+        android:translateX="54"
+        android:translateY="54">
+        
+        <!-- Top scoop (Coral) -->
+        <path
+            android:fillColor="#FF7A8A"
+            android:pathData="M0,-20 A12,12 0 1,1 0,-20 Z"/>
+        
+        <!-- Middle scoop (Mint) -->
+        <path
+            android:fillColor="#7BE6C3"
+            android:pathData="M0,-8 A10,10 0 1,1 0,-8 Z"/>
+        
+        <!-- Bottom scoop (Lavender) -->
+        <path
+            android:fillColor="#C9B2FF"
+            android:pathData="M0,4 A8,8 0 1,1 0,4 Z"/>
+        
+        <!-- Cone -->
+        <path
+            android:fillColor="#E8A87C"
+            android:pathData="M-6,12 L0,28 L6,12 Z"/>
+    </group>
+</vector>

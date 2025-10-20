@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Curve &amp; Fuel</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_measure">Measure</string>
+    <string name="nav_scan">Scan</string>
+    <string name="nav_chat">Chat</string>
+    
+    <!-- Home Screen -->
+    <string name="greeting_morning">Good Morning</string>
+    <string name="greeting_afternoon">Good Afternoon</string>
+    <string name="greeting_evening">Good Evening</string>
+    <string name="greeting_night">Good Night</string>
+    <string name="home_subtitle">Let\'s track your progress</string>
+    
+    <!-- Measurement -->
+    <string name="measure_waist">Waist</string>
+    <string name="measure_hip">Hip</string>
+    <string name="measure_whr">WHR</string>
+    <string name="measure_inches">inches</string>
+    <string name="measure_ratio">ratio</string>
+    
+    <!-- Scanner -->
+    <string name="scan_food">Scan Food</string>
+    <string name="scan_email">Email Log</string>
+    <string name="scan_receipt">Receipt</string>
+    <string name="scan_instruction">Point at food to scan</string>
+    
+    <!-- AI -->
+    <string name="ai_name">Polynational AI</string>
+    <string name="ai_tagline">Your Personal Health Coach</string>
+    <string name="ai_analyzing">Analyzing your data…</string>
+    
+    <!-- Nutrition -->
+    <string name="nutrition_calories">Calories</string>
+    <string name="nutrition_protein">Protein</string>
+    <string name="nutrition_carbs">Carbs</string>
+    <string name="nutrition_fat">Fat</string>
+    
+    <!-- Actions -->
+    <string name="action_back">Back</string>
+    <string name="action_next">Next</string>
+    <string name="action_save">Save</string>
+    <string name="action_share">Share</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_add">Add</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_cancel">Cancel</string>
+    
+    <!-- Messages -->
+    <string name="msg_scan_success">Scan Successful!</string>
+    <string name="msg_data_extracted">Nutritional data extracted and ready</string>
+    <string name="msg_privacy">Your emails are processed securely and deleted after scanning</string>
+    
+    <!-- Health Status -->
+    <string name="status_healthy">Healthy</string>
+    <string name="status_moderate">Moderate</string>
+    <string name="status_high_risk">High Risk</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_profile">Profile</string>
+    <string name="cd_menu">Menu</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_expand">Expand</string>
+    <string name="cd_collapse">Collapse</string>
+</resources>
