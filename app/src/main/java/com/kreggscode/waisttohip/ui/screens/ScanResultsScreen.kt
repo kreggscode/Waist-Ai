@@ -32,6 +32,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kreggscode.waisttohip.ui.viewmodels.ScannerViewModel
 import androidx.compose.ui.platform.LocalContext
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 @Composable
 fun ScanResultsScreen(
     items: List<FoodItem>,
@@ -156,7 +159,25 @@ fun ScanResultsScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 BottomActionBar(
                     onAddMore = { },
-                    onConfirm = onConfirm,
+                    onAddMeal = {
+                        scope.launch {
+                            try {
+                                viewModel.saveMealToDatabase(editedItems)
+                                android.widget.Toast.makeText(
+                                    context,
+                                    "Meal added successfully!",
+                                    android.widget.Toast.LENGTH_SHORT
+                                ).show()
+                                onConfirm()
+                            } catch (e: Exception) {
+                                android.widget.Toast.makeText(
+                                    context,
+                                    "Failed to add meal: ${e.message}",
+                                    android.widget.Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    },
                     totalCalories = totalCalories
                 )
             }
@@ -729,7 +750,7 @@ fun AddMoreItemCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
 @Composable
 fun BottomActionBar(
     onAddMore: () -> Unit,
-    onConfirm: () -> Unit,
+    onAddMeal: () -> Unit,
     totalCalories: Int
 ) {
     Surface(
@@ -780,25 +801,7 @@ fun BottomActionBar(
                 
                 AnimatedGradientButton(
                     text = "Add to Meal Log",
-                    onClick = {
-                        scope.launch {
-                            try {
-                                viewModel.saveMealToDatabase(editedItems)
-                                android.widget.Toast.makeText(
-                                    context,
-                                    "Meal added successfully!",
-                                    android.widget.Toast.LENGTH_SHORT
-                                ).show()
-                                onConfirm()
-                            } catch (e: Exception) {
-                                android.widget.Toast.makeText(
-                                    context,
-                                    "Failed to add meal: ${e.message}",
-                                    android.widget.Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    },
+                    onClick = onAddMeal,
                     modifier = Modifier.weight(1.5f),
                     gradientColors = listOf(Coral, Lavender, Mint)
                 )

@@ -40,6 +40,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.kreggscode.waisttohip.ui.components.*
 import com.kreggscode.waisttohip.ui.theme.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun MeasureScreen(
@@ -99,7 +100,8 @@ fun MeasureScreen(
                 waistValue = waistValue,
                 hipValue = hipValue,
                 onAnalysisClick = onResultsClick,
-                onBackClick = { currentStep = 1 }
+                onBackClick = { currentStep = 1 },
+                viewModel = viewModel
             )
             3 -> ComingSoonScreen(
                 onBackClick = { currentStep = 0 }
