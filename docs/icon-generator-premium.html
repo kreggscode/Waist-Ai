@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaistAI - Premium Icon Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .icon-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon-preview {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-label {
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .icon-size {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:active {
+            transform: scale(0.98);
+        }
+
+        .controls {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .control-group input[type="color"],
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .control-group input[type="range"] {
+            height: 40px;
+        }
+
+        .color-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .color-input-wrapper label {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .download-all-btn {
+            width: 100%;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .download-all-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .info-box li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        /* Icon Design Styles */
+        .icon-design {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .gradient-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .icon-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 80%;
+        }
+
+        .waist-icon {
+            font-size: 4rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .app-text {
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            margin-top: 10px;
+        }
+
+        .ai-badge {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            display: inline-block;
+            margin-top: 5px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .icon-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 WaistAI Icon Generator</h1>
+        <p class="subtitle">Create beautiful, professional app icons for all Android sizes</p>
+
+        <div class="controls">
+            <h3 style="margin-bottom: 20px; color: #667eea;">🎨 Customize Your Icon</h3>
+            <div class="color-inputs">
+                <div class="color-input-wrapper">
+                    <label>Primary Color</label>
+                    <input type="color" id="color1" value="#FF7A8A">
+                </div>
+                <div class="color-input-wrapper">
+                    <label>Secondary Color</label>
+                    <input type="color" id="color2" value="#C9B2FF">
+                </div>
+                <div class="color-input-wrapper">
+                    <label>Accent Color</label>
+                    <input type="color" id="color3" value="#7BE6C3">
+                </div>
+            </div>
+        </div>
+
+        <div class="icon-grid" id="iconGrid"></div>
+
+        <button class="download-all-btn" onclick="downloadAllIcons()">
+            📦 Download All Icons as ZIP
+        </button>
+
+        <div class="info-box">
+            <h3>📱 Icon Sizes Included</h3>
+            <ul>
+                <li><strong>mdpi:</strong> 48x48 px (Baseline density)</li>
+                <li><strong>hdpi:</strong> 72x72 px (High density)</li>
+                <li><strong>xhdpi:</strong> 96x96 px (Extra-high density)</li>
+                <li><strong>xxhdpi:</strong> 144x144 px (Extra-extra-high density)</li>
+                <li><strong>xxxhdpi:</strong> 192x192 px (Extra-extra-extra-high density)</li>
+                <li><strong>Play Store:</strong> 512x512 px (Google Play listing)</li>
+            </ul>
+        </div>
+
+        <div class="info-box" style="margin-top: 20px; border-left-color: #f5576c;">
+            <h3 style="color: #f5576c;">📋 How to Use</h3>
+            <ul>
+                <li>Customize colors using the color pickers above</li>
+                <li>Click individual "Download" buttons for specific sizes</li>
+                <li>Or click "Download All Icons as ZIP" to get all sizes at once</li>
+                <li>Place icons in <code>app/src/main/res/mipmap-{density}/</code> folders</li>
+                <li>Use the 512x512 icon for your Google Play Store listing</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        const iconSizes = [
+            { name: 'mdpi', size: 48, folder: 'mipmap-mdpi' },
+            { name: 'hdpi', size: 72, folder: 'mipmap-hdpi' },
+            { name: 'xhdpi', size: 96, folder: 'mipmap-xhdpi' },
+            { name: 'xxhdpi', size: 144, folder: 'mipmap-xxhdpi' },
+            { name: 'xxxhdpi', size: 192, folder: 'mipmap-xxxhdpi' },
+            { name: 'Play Store', size: 512, folder: 'play-store' }
+        ];
+
+        function createIcon(size, color1, color2, color3) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(0.5, color2);
+            gradient.addColorStop(1, color3);
+
+            // Draw rounded rectangle background
+            const radius = size * 0.22;
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            // Add subtle overlay
+            const overlayGradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            overlayGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+            overlayGradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+            ctx.fillStyle = overlayGradient;
+            ctx.fill();
+
+            // Draw waist measurement icon
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.08;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Draw body outline
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const bodyWidth = size * 0.35;
+            const bodyHeight = size * 0.5;
+
+            ctx.beginPath();
+            // Shoulders
+            ctx.moveTo(centerX - bodyWidth, centerY - bodyHeight/2);
+            ctx.lineTo(centerX + bodyWidth, centerY - bodyHeight/2);
+            // Right side
+            ctx.quadraticCurveTo(centerX + bodyWidth * 1.1, centerY, centerX + bodyWidth * 0.8, centerY + bodyHeight/2);
+            // Bottom
+            ctx.lineTo(centerX - bodyWidth * 0.8, centerY + bodyHeight/2);
+            // Left side
+            ctx.quadraticCurveTo(centerX - bodyWidth * 1.1, centerY, centerX - bodyWidth, centerY - bodyHeight/2);
+            ctx.stroke();
+
+            // Draw measurement line at waist
+            ctx.beginPath();
+            ctx.moveTo(centerX - bodyWidth * 1.3, centerY);
+            ctx.lineTo(centerX + bodyWidth * 1.3, centerY);
+            ctx.stroke();
+
+            // Draw measurement arrows
+            const arrowSize = size * 0.05;
+            // Left arrow
+            ctx.beginPath();
+            ctx.moveTo(centerX - bodyWidth * 1.3, centerY);
+            ctx.lineTo(centerX - bodyWidth * 1.3 + arrowSize, centerY - arrowSize);
+            ctx.moveTo(centerX - bodyWidth * 1.3, centerY);
+            ctx.lineTo(centerX - bodyWidth * 1.3 + arrowSize, centerY + arrowSize);
+            ctx.stroke();
+            // Right arrow
+            ctx.beginPath();
+            ctx.moveTo(centerX + bodyWidth * 1.3, centerY);
+            ctx.lineTo(centerX + bodyWidth * 1.3 - arrowSize, centerY - arrowSize);
+            ctx.moveTo(centerX + bodyWidth * 1.3, centerY);
+            ctx.lineTo(centerX + bodyWidth * 1.3 - arrowSize, centerY + arrowSize);
+            ctx.stroke();
+
+            // Add AI sparkle
+            const sparkleSize = size * 0.15;
+            const sparkleX = centerX + bodyWidth * 0.9;
+            const sparkleY = centerY - bodyHeight * 0.4;
+            
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = size * 0.02;
+            
+            // Draw star
+            ctx.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * Math.PI) / 4;
+                const radius = i % 2 === 0 ? sparkleSize : sparkleSize * 0.4;
+                const x = sparkleX + Math.cos(angle) * radius;
+                const y = sparkleY + Math.sin(angle) * radius;
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            return canvas;
+        }
+
+        function updateIcons() {
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+            const color3 = document.getElementById('color3').value;
+
+            const grid = document.getElementById('iconGrid');
+            grid.innerHTML = '';
+
+            iconSizes.forEach(({ name, size, folder }) => {
+                const card = document.createElement('div');
+                card.className = 'icon-card';
+
+                const preview = document.createElement('div');
+                preview.className = 'icon-preview';
+                
+                const canvas = createIcon(size, color1, color2, color3);
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.borderRadius = '20px';
+                preview.appendChild(canvas);
+
+                const label = document.createElement('div');
+                label.className = 'icon-label';
+                label.textContent = name;
+
+                const sizeLabel = document.createElement('div');
+                sizeLabel.className = 'icon-size';
+                sizeLabel.textContent = `${size}x${size} px`;
+
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'download-btn';
+                downloadBtn.textContent = '⬇️ Download';
+                downloadBtn.onclick = () => downloadIcon(canvas, name, size);
+
+                card.appendChild(preview);
+                card.appendChild(label);
+                card.appendChild(sizeLabel);
+                card.appendChild(downloadBtn);
+                grid.appendChild(card);
+            });
+        }
+
+        function downloadIcon(canvas, name, size) {
+            const link = document.createElement('a');
+            link.download = `ic_launcher_${name.toLowerCase().replace(' ', '_')}_${size}x${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        async function downloadAllIcons() {
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+            const color3 = document.getElementById('color3').value;
+
+            const zip = new JSZip();
+
+            iconSizes.forEach(({ name, size, folder }) => {
+                const canvas = createIcon(size, color1, color2, color3);
+                const dataUrl = canvas.toDataURL('image/png');
+                const base64Data = dataUrl.split(',')[1];
+                
+                if (name === 'Play Store') {
+                    zip.file(`${folder}/ic_launcher_512.png`, base64Data, { base64: true });
+                } else {
+                    zip.file(`${folder}/ic_launcher.png`, base64Data, { base64: true });
+                }
+            });
+
+            // Add README
+            const readme = `WaistAI App Icons
+==================
+
+Generated on: ${new Date().toLocaleString()}
+
+Installation Instructions:
+1. Copy each mipmap-* folder to app/src/main/res/
+2. Replace existing ic_launcher.png files
+3. Use ic_launcher_512.png for Google Play Store listing
+
+Icon Sizes:
+- mdpi: 48x48 px
+- hdpi: 72x72 px
+- xhdpi: 96x96 px
+- xxhdpi: 144x144 px
+- xxxhdpi: 192x192 px
+- Play Store: 512x512 px
+
+Colors Used:
+- Primary: ${color1}
+- Secondary: ${color2}
+- Accent: ${color3}
+
+© 2025 KreggsCode. All rights reserved.
+`;
+            zip.file('README.txt', readme);
+
+            const blob = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'waistai_icons.zip';
+            link.click();
+        }
+
+        // Initialize
+        document.getElementById('color1').addEventListener('input', updateIcons);
+        document.getElementById('color2').addEventListener('input', updateIcons);
+        document.getElementById('color3').addEventListener('input', updateIcons);
+        updateIcons();
+    </script>
+</body>
+</html>

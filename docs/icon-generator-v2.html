@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaistAI - Beautiful Icon Generator V2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(255, 122, 138, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 50px;
+            font-size: 1.2rem;
+        }
+
+        .design-selector {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .design-btn {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .design-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .design-btn.active {
+            background: linear-gradient(135deg, #FF7A8A, #C9B2FF);
+            border-color: transparent;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls h3 {
+            color: white;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .color-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .color-input-group label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .color-input-group input[type="color"] {
+            width: 100%;
+            height: 60px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .icon-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon-preview {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-label {
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .icon-size {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FF7A8A, #C9B2FF);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 122, 138, 0.4);
+        }
+
+        .download-all {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #7BE6C3, #FF7A8A);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .download-all:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(123, 230, 195, 0.4);
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-section h3 {
+            color: #FF7A8A;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-section li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .info-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #7BE6C3;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .icon-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ WaistAI Icon Generator</h1>
+        <p class="subtitle">Beautiful, modern icons that reflect your fitness tracking app</p>
+
+        <div class="design-selector">
+            <button class="design-btn active" onclick="selectDesign('modern')">🎨 Modern Gradient</button>
+            <button class="design-btn" onclick="selectDesign('minimal')">⚡ Minimal Clean</button>
+            <button class="design-btn" onclick="selectDesign('vibrant')">🌈 Vibrant Bold</button>
+        </div>
+
+        <div class="controls">
+            <h3>🎨 Customize Colors</h3>
+            <div class="color-grid">
+                <div class="color-input-group">
+                    <label for="primary">Primary Color</label>
+                    <input type="color" id="primary" value="#FF7A8A" title="Primary Color">
+                </div>
+                <div class="color-input-group">
+                    <label for="secondary">Secondary Color</label>
+                    <input type="color" id="secondary" value="#C9B2FF" title="Secondary Color">
+                </div>
+                <div class="color-input-group">
+                    <label for="accent">Accent Color</label>
+                    <input type="color" id="accent" value="#7BE6C3" title="Accent Color">
+                </div>
+            </div>
+        </div>
+
+        <div class="icon-grid" id="iconGrid"></div>
+
+        <button class="download-all" onclick="downloadAllIcons()">
+            📦 Download All Icons (ZIP)
+        </button>
+
+        <div class="info-section">
+            <h3>📱 All Android Sizes Included</h3>
+            <ul>
+                <li><strong>mdpi:</strong> 48×48 px - Baseline density screens</li>
+                <li><strong>hdpi:</strong> 72×72 px - High density screens</li>
+                <li><strong>xhdpi:</strong> 96×96 px - Extra-high density screens</li>
+                <li><strong>xxhdpi:</strong> 144×144 px - Extra-extra-high density screens</li>
+                <li><strong>xxxhdpi:</strong> 192×192 px - Extra-extra-extra-high density screens</li>
+                <li><strong>Play Store:</strong> 512×512 px - Google Play Store listing</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>🚀 Quick Start Guide</h3>
+            <ul>
+                <li>Choose your preferred design style above</li>
+                <li>Customize the colors to match your brand</li>
+                <li>Download individual sizes or get all as ZIP</li>
+                <li>Place icons in <code>app/src/main/res/mipmap-{density}/</code></li>
+                <li>Upload 512×512 to Google Play Console</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        let currentDesign = 'modern';
+
+        const iconSizes = [
+            { name: 'mdpi', size: 48, folder: 'mipmap-mdpi' },
+            { name: 'hdpi', size: 72, folder: 'mipmap-hdpi' },
+            { name: 'xhdpi', size: 96, folder: 'mipmap-xhdpi' },
+            { name: 'xxhdpi', size: 144, folder: 'mipmap-xxhdpi' },
+            { name: 'xxxhdpi', size: 192, folder: 'mipmap-xxxhdpi' },
+            { name: 'Play Store', size: 512, folder: 'play-store' }
+        ];
+
+        function selectDesign(design) {
+            currentDesign = design;
+            document.querySelectorAll('.design-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateIcons();
+        }
+
+        function createModernIcon(size, primary, secondary, accent) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, primary);
+            gradient.addColorStop(0.5, secondary);
+            gradient.addColorStop(1, accent);
+
+            // Rounded square
+            const radius = size * 0.22;
+            ctx.fillStyle = gradient;
+            roundRect(ctx, 0, 0, size, size, radius);
+            ctx.fill();
+
+            // Overlay gradient for depth
+            const overlay = ctx.createRadialGradient(size * 0.3, size * 0.3, 0, size / 2, size / 2, size * 0.7);
+            overlay.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+            overlay.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+            ctx.fillStyle = overlay;
+            roundRect(ctx, 0, 0, size, size, radius);
+            ctx.fill();
+
+            // Draw stylized body/waist icon
+            ctx.strokeStyle = 'white';
+            ctx.fillStyle = 'white';
+            ctx.lineWidth = size * 0.06;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            const centerX = size / 2;
+            const centerY = size / 2;
+
+            // Draw abstract waist shape
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - size * 0.15, size * 0.12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body outline
+            ctx.beginPath();
+            ctx.moveTo(centerX - size * 0.15, centerY - size * 0.05);
+            ctx.bezierCurveTo(
+                centerX - size * 0.2, centerY + size * 0.05,
+                centerX - size * 0.15, centerY + size * 0.15,
+                centerX - size * 0.12, centerY + size * 0.25
+            );
+            ctx.lineTo(centerX + size * 0.12, centerY + size * 0.25);
+            ctx.bezierCurveTo(
+                centerX + size * 0.15, centerY + size * 0.15,
+                centerX + size * 0.2, centerY + size * 0.05,
+                centerX + size * 0.15, centerY - size * 0.05
+            );
+            ctx.closePath();
+            ctx.stroke();
+
+            // Measurement line
+            ctx.beginPath();
+            ctx.moveTo(centerX - size * 0.25, centerY + size * 0.05);
+            ctx.lineTo(centerX + size * 0.25, centerY + size * 0.05);
+            ctx.stroke();
+
+            // Arrows
+            drawArrow(ctx, centerX - size * 0.25, centerY + size * 0.05, 'left', size * 0.04);
+            drawArrow(ctx, centerX + size * 0.25, centerY + size * 0.05, 'right', size * 0.04);
+
+            // AI sparkle
+            drawSparkle(ctx, centerX + size * 0.2, centerY - size * 0.2, size * 0.08);
+
+            return canvas;
+        }
+
+        function createMinimalIcon(size, primary, secondary, accent) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Solid background
+            ctx.fillStyle = primary;
+            const radius = size * 0.22;
+            roundRect(ctx, 0, 0, size, size, radius);
+            ctx.fill();
+
+            // Simple icon
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.08;
+            ctx.lineCap = 'round';
+
+            const centerX = size / 2;
+            const centerY = size / 2;
+
+            // Circle for head
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - size * 0.15, size * 0.1, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Simple body
+            ctx.beginPath();
+            ctx.moveTo(centerX - size * 0.15, centerY);
+            ctx.lineTo(centerX + size * 0.15, centerY);
+            ctx.moveTo(centerX - size * 0.12, centerY + size * 0.2);
+            ctx.lineTo(centerX + size * 0.12, centerY + size * 0.2);
+            ctx.stroke();
+
+            // Connecting lines
+            ctx.beginPath();
+            ctx.moveTo(centerX - size * 0.15, centerY);
+            ctx.lineTo(centerX - size * 0.12, centerY + size * 0.2);
+            ctx.moveTo(centerX + size * 0.15, centerY);
+            ctx.lineTo(centerX + size * 0.12, centerY + size * 0.2);
+            ctx.stroke();
+
+            return canvas;
+        }
+
+        function createVibrantIcon(size, primary, secondary, accent) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Multi-color gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, primary);
+            gradient.addColorStop(0.33, secondary);
+            gradient.addColorStop(0.66, accent);
+            gradient.addColorStop(1, primary);
+
+            const radius = size * 0.22;
+            ctx.fillStyle = gradient;
+            roundRect(ctx, 0, 0, size, size, radius);
+            ctx.fill();
+
+            // Glow effect
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.shadowBlur = size * 0.05;
+
+            // Bold icon
+            ctx.fillStyle = 'white';
+            const centerX = size / 2;
+            const centerY = size / 2;
+
+            // Head
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - size * 0.15, size * 0.12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body shape
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - size * 0.03);
+            ctx.bezierCurveTo(
+                centerX - size * 0.18, centerY,
+                centerX - size * 0.15, centerY + size * 0.15,
+                centerX, centerY + size * 0.25
+            );
+            ctx.bezierCurveTo(
+                centerX + size * 0.15, centerY + size * 0.15,
+                centerX + size * 0.18, centerY,
+                centerX, centerY - size * 0.03
+            );
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            return canvas;
+        }
+
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        function drawArrow(ctx, x, y, direction, size) {
+            ctx.beginPath();
+            if (direction === 'left') {
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size, y - size);
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size, y + size);
+            } else {
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - size, y - size);
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - size, y + size);
+            }
+            ctx.stroke();
+        }
+
+        function drawSparkle(ctx, x, y, size) {
+            ctx.save();
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = size * 0.3;
+            
+            ctx.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * Math.PI) / 4;
+                const radius = i % 2 === 0 ? size : size * 0.4;
+                const px = x + Math.cos(angle) * radius;
+                const py = y + Math.sin(angle) * radius;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function updateIcons() {
+            const primary = document.getElementById('primary').value;
+            const secondary = document.getElementById('secondary').value;
+            const accent = document.getElementById('accent').value;
+
+            const grid = document.getElementById('iconGrid');
+            grid.innerHTML = '';
+
+            iconSizes.forEach(({ name, size }) => {
+                const card = document.createElement('div');
+                card.className = 'icon-card';
+
+                let canvas;
+                if (currentDesign === 'modern') {
+                    canvas = createModernIcon(size, primary, secondary, accent);
+                } else if (currentDesign === 'minimal') {
+                    canvas = createMinimalIcon(size, primary, secondary, accent);
+                } else {
+                    canvas = createVibrantIcon(size, primary, secondary, accent);
+                }
+
+                const preview = document.createElement('div');
+                preview.className = 'icon-preview';
+                canvas.className = 'icon-preview';
+                preview.appendChild(canvas);
+
+                const label = document.createElement('div');
+                label.className = 'icon-label';
+                label.textContent = name;
+
+                const sizeLabel = document.createElement('div');
+                sizeLabel.className = 'icon-size';
+                sizeLabel.textContent = `${size}×${size} px`;
+
+                const btn = document.createElement('button');
+                btn.className = 'download-btn';
+                btn.textContent = '⬇️ Download';
+                btn.onclick = () => {
+                    const link = document.createElement('a');
+                    link.download = `ic_launcher_${name.toLowerCase().replace(' ', '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+
+                card.appendChild(preview);
+                card.appendChild(label);
+                card.appendChild(sizeLabel);
+                card.appendChild(btn);
+                grid.appendChild(card);
+            });
+        }
+
+        async function downloadAllIcons() {
+            const primary = document.getElementById('primary').value;
+            const secondary = document.getElementById('secondary').value;
+            const accent = document.getElementById('accent').value;
+
+            const zip = new JSZip();
+
+            iconSizes.forEach(({ name, size, folder }) => {
+                let canvas;
+                if (currentDesign === 'modern') {
+                    canvas = createModernIcon(size, primary, secondary, accent);
+                } else if (currentDesign === 'minimal') {
+                    canvas = createMinimalIcon(size, primary, secondary, accent);
+                } else {
+                    canvas = createVibrantIcon(size, primary, secondary, accent);
+                }
+
+                const dataUrl = canvas.toDataURL('image/png');
+                const base64 = dataUrl.split(',')[1];
+                
+                const filename = name === 'Play Store' ? 'ic_launcher_512.png' : 'ic_launcher.png';
+                zip.file(`${folder}/${filename}`, base64, { base64: true });
+            });
+
+            const readme = `WaistAI App Icons - ${currentDesign.toUpperCase()} Design
+${'='.repeat(50)}
+
+Generated: ${new Date().toLocaleString()}
+Design Style: ${currentDesign}
+
+Colors:
+- Primary: ${primary}
+- Secondary: ${secondary}
+- Accent: ${accent}
+
+Installation:
+1. Copy each mipmap-* folder to app/src/main/res/
+2. Replace existing ic_launcher.png files
+3. Upload ic_launcher_512.png to Google Play Console
+
+© 2025 KreggsCode
+`;
+            zip.file('README.txt', readme);
+
+            const blob = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `waistai_icons_${currentDesign}.zip`;
+            link.click();
+        }
+
+        // Initialize
+        ['primary', 'secondary', 'accent'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateIcons);
+        });
+        updateIcons();
+    </script>
+</body>
+</html>

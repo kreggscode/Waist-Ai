@@ -16,6 +16,10 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Send
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material.icons.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +32,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kreggscode.waisttohip.ui.components.*
 import com.kreggscode.waisttohip.ui.theme.*
 import com.kreggscode.waisttohip.data.PollinationsAI
@@ -35,12 +44,53 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import android.speech.tts.TextToSpeech
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val systemUiController = rememberSystemUiController()
+    
+    // Use the exact same color as the header background
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val statusBarColor = backgroundColor
+    
+    // Set status bar color to match background
+    val isLight = backgroundColor.luminance() > 0.5f
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = statusBarColor,
+            darkIcons = isLight
+        )
+    }
+    
+    val tts = remember {
+        var textToSpeech: TextToSpeech? = null
+        textToSpeech = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                // Set language to US English for realistic voice
+                textToSpeech?.let {
+                    val result = it.setLanguage(Locale.US)
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        // Handle error
+                    }
+                }
+            }
+        }
+        textToSpeech
+    }
+    
+    DisposableEffect(Unit) {
+        onDispose {
+            tts?.stop()
+            tts?.shutdown()
+        }
+    }
+    
     var messages by remember { mutableStateOf(listOf(
         ChatMessage(
             text = "Hello! I'm your AI Expert health coach. I can help you with personalized diet plans, nutrition advice, and answer any questions about your health metrics. What would you like to know?",
@@ -51,16 +101,21 @@ fun ChatScreen(
     
     var inputText by remember { mutableStateOf("") }
     var isTyping by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
+    var speakingMessageIndex by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .imePadding(),
+            .fillMaxSize(),
         topBar = {
-            ChatHeader(onBackClick = onBackClick)
+            ChatHeader(
+                onBackClick = onBackClick,
+                isFavorite = isFavorite,
+                onFavoriteClick = { isFavorite = !isFavorite }
+            )
         },
         bottomBar = {
             ChatInputField(
@@ -110,8 +165,26 @@ fun ChatScreen(
             contentPadding = PaddingValues(vertical = 16.dp),
             reverseLayout = false
         ) {
-            items(messages) { message ->
-                ChatMessageItem(message = message)
+            items(messages.size) { index ->
+                val message = messages[index]
+                ChatMessageItem(
+                    message = message,
+                    isSpeaking = speakingMessageIndex == index,
+                    onSpeakClick = if (!message.isUser) {
+                        {
+                            if (speakingMessageIndex == index) {
+                                // Stop speaking
+                                tts?.stop()
+                                speakingMessageIndex = null
+                            } else {
+                                // Start speaking
+                                tts?.stop() // Stop any previous speech
+                                tts?.speak(message.text, TextToSpeech.QUEUE_FLUSH, null, null)
+                                speakingMessageIndex = index
+                            }
+                        }
+                    } else null
+                )
             }
             
             if (isTyping) {
@@ -135,43 +208,111 @@ fun ChatScreen(
 }
 
 @Composable
-fun ChatHeader(onBackClick: () -> Unit) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 4.dp,
-        tonalElevation = 2.dp
+fun ChatHeader(
+    onBackClick: () -> Unit,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
     ) {
+        // Subtle purple overlay gradient
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            NeonPurple.copy(alpha = 0.12f),
+                            NeonPurple.copy(alpha = 0.06f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+        // Decorative gradient overlay
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            NeonPurple.copy(alpha = 0.1f),
+                            Color.Transparent
+                        ),
+                        center = androidx.compose.ui.geometry.Offset(100f, 100f),
+                        radius = 300f
+                    )
+                )
+        )
+        
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 8.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Rounded.ArrowBack,
                     contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(24.dp)
                 )
             }
             
-            // AI Avatar
+            Spacer(modifier = Modifier.width(4.dp))
+            
+            // Enhanced AI Avatar with glow effect
             Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(
-                        brush = Brush.linearGradient(colors = GradientNeon)
-                    ),
+                modifier = Modifier.size(56.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Psychology,
-                    contentDescription = "AI Expert",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                // Outer glow
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    NeonPurple.copy(alpha = 0.3f),
+                                    Color.Transparent
+                                )
+                            )
+                        )
                 )
+                // Avatar
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .border(
+                            width = 2.dp,
+                            brush = Brush.linearGradient(colors = GradientNeon),
+                            shape = CircleShape
+                        )
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = GradientNeon,
+                                start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                                end = androidx.compose.ui.geometry.Offset(100f, 100f)
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Psychology,
+                        contentDescription = "AI Expert",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.width(12.dp))
@@ -181,33 +322,66 @@ fun ChatHeader(onBackClick: () -> Unit) {
             ) {
                 Text(
                     text = "AI Expert",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Animated pulse dot
+                    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+                    val pulseAlpha by infiniteTransition.animateFloat(
+                        initialValue = 0.5f,
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1000),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "pulse_alpha"
+                    )
+                    
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
+                            .size(10.dp)
                             .clip(CircleShape)
-                            .background(HealthyGreen)
+                            .background(HealthyGreen.copy(alpha = pulseAlpha))
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Online",
+                        text = "Online • Ready to help",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Medium
                     )
                 }
+            }
+            
+            // Star/Favorite button
+            IconButton(
+                onClick = onFavoriteClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isFavorite) NeonPurple.copy(alpha = 0.1f)
+                        else Color.Transparent
+                    )
+            ) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Rounded.Star else Icons.Rounded.StarBorder,
+                    contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                    tint = if (isFavorite) NeonPurple else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(24.dp)
+                )
             }
             
             IconButton(onClick = { }) {
                 Icon(
                     imageVector = Icons.Rounded.MoreVert,
                     contentDescription = "More",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
@@ -215,7 +389,11 @@ fun ChatHeader(onBackClick: () -> Unit) {
 }
 
 @Composable
-fun ChatMessageItem(message: ChatMessage) {
+fun ChatMessageItem(
+    message: ChatMessage,
+    isSpeaking: Boolean = false,
+    onSpeakClick: (() -> Unit)? = null
+) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
     val bubbleColors = if (message.isUser) {
         listOf(Coral, CoralLight)
@@ -288,12 +466,42 @@ fun ChatMessageItem(message: ChatMessage) {
                             } else Modifier
                         )
                 ) {
-                    Text(
-                        text = message.text,
+                    Row(
                         modifier = Modifier.padding(12.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = textColor
-                    )
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = message.text,
+                            modifier = Modifier.weight(1f, fill = false),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = textColor
+                        )
+                        
+                        // Tiny speaker button at the end of AI message text
+                        if (!message.isUser && onSpeakClick != null) {
+                            IconButton(
+                                onClick = onSpeakClick,
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isSpeaking) {
+                                            Brush.linearGradient(colors = listOf(Coral, CoralLight))
+                                        } else {
+                                            Brush.linearGradient(colors = GradientNeon.map { it.copy(alpha = 0.2f) })
+                                        }
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = if (isSpeaking) Icons.Rounded.Stop else Icons.Rounded.VolumeUp,
+                                    contentDescription = if (isSpeaking) "Stop speaking" else "Speak",
+                                    tint = if (isSpeaking) Color.White else NeonPurple,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
             
@@ -427,66 +635,108 @@ fun ChatInputField(
     onValueChange: (String) -> Unit,
     onSend: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 8.dp
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .imePadding()
+            .background(Color.Transparent)
     ) {
-        Row(
+        // Floating input container
+        Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.Bottom
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            shape = RoundedCornerShape(28.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 12.dp,
+            tonalElevation = 4.dp
         ) {
-            TextField(
-                value = value,
-                onValueChange = onValueChange,
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(24.dp)),
-                placeholder = {
-                    Text(
-                        text = "Type your message...",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                ),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Send
-                ),
-                keyboardActions = KeyboardActions(
-                    onSend = { onSend() }
-                ),
-                singleLine = false,
-                maxLines = 4
-            )
-            
-            Spacer(modifier = Modifier.width(8.dp))
-            
-            IconButton(
-                onClick = onSend,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.5.dp,
                         brush = Brush.linearGradient(
-                            colors = if (value.isNotBlank()) GradientNeon else listOf(Color.Gray, Color.Gray)
-                        )
+                            colors = if (value.isNotBlank()) GradientNeon.map { it.copy(alpha = 0.5f) }
+                            else listOf(
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                            )
+                        ),
+                        shape = RoundedCornerShape(28.dp)
                     )
-                    .animateContentSize()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Send,
-                    contentDescription = "Send",
-                    tint = Color.White
+                TextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .weight(1f),
+                    placeholder = {
+                        Text(
+                            text = "Ask me anything...",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Send
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSend = { onSend() }
+                    ),
+                    singleLine = false,
+                    maxLines = 4
                 )
+                
+                Spacer(modifier = Modifier.width(8.dp))
+                
+                // Send button with animation
+                val scale by animateFloatAsState(
+                    targetValue = if (value.isNotBlank()) 1f else 0.9f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    label = "send_scale"
+                )
+                
+                IconButton(
+                    onClick = onSend,
+                    enabled = value.isNotBlank(),
+                    modifier = Modifier
+                        .size(44.dp)
+                        .scale(scale)
+                        .clip(CircleShape)
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = if (value.isNotBlank()) GradientNeon
+                                else listOf(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            )
+                        )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Send,
+                        contentDescription = "Send",
+                        tint = if (value.isNotBlank()) Color.White
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }

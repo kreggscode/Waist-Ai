@@ -677,95 +677,95 @@ data class Recommendation(
 private fun generateAIAnalysis(whrValue: Float): String {
     return when {
         whrValue < 0.85f -> """
-            Excellent news! Your waist-to-hip ratio of ${String.format("%.2f", whrValue)} is within the healthy range. 
-            This indicates a lower risk of cardiovascular disease and metabolic disorders. 
+            Great! Your waist-to-hip ratio of ${String.format("%.2f", whrValue)} is ${String.format("%.2f", whrValue)}. 
             
-            Your body composition suggests good fat distribution, which is associated with better insulin sensitivity 
-            and overall metabolic health. Keep up the great work with your current lifestyle habits!
+            Based on general fitness guidelines, this measurement falls within commonly referenced ranges. 
+            Keep tracking your measurements to monitor your progress over time!
             
-            To maintain this healthy ratio, I recommend continuing with regular physical activity and a balanced diet 
-            rich in whole foods. Your current trajectory is positive, and small consistent efforts will help you 
-            maintain these excellent results.
+            Consider maintaining your current activity levels and nutrition habits. Regular physical activity 
+            and a balanced diet can help you stay on track with your fitness goals.
+            
+            *Disclaimer: This app provides informational content only and is not medical advice. 
+            Consult a healthcare professional for personalized health guidance.*
         """.trimIndent()
         
         whrValue < 0.95f -> """
-            Your waist-to-hip ratio of ${String.format("%.2f", whrValue)} falls in the moderate range. 
-            While not immediately concerning, there's room for improvement to optimize your health outcomes.
+            Your waist-to-hip ratio measurement is ${String.format("%.2f", whrValue)}. 
             
-            This ratio suggests some central adiposity, which can be addressed through targeted lifestyle modifications. 
-            The good news is that even small changes can lead to significant improvements in your WHR and overall health.
+            You might consider focusing on your fitness routine and nutrition tracking. Many people find 
+            that consistent exercise and mindful eating help them achieve their body composition goals.
             
-            I recommend focusing on increasing your daily activity levels and making strategic dietary adjustments. 
-            With consistent effort, you can move into the healthy range within 2-3 months.
+            Try increasing your daily activity levels and tracking your meals to see what works best for you. 
+            Small, sustainable changes often lead to the best long-term results.
+            
+            *Disclaimer: This app provides informational content only and is not medical advice. 
+            Consult a healthcare professional for personalized health guidance.*
         """.trimIndent()
         
         else -> """
-            Your waist-to-hip ratio of ${String.format("%.2f", whrValue)} indicates an elevated health risk that deserves attention. 
-            This suggests higher central adiposity, which is associated with increased risk of metabolic conditions.
+            Your current waist-to-hip ratio measurement is ${String.format("%.2f", whrValue)}. 
             
-            However, this is completely reversible with the right approach! Many people have successfully improved their WHR 
-            through sustainable lifestyle changes. You're taking the first step by measuring and being aware.
+            This is a good starting point for tracking your fitness journey! Many people successfully improve 
+            their measurements through consistent lifestyle changes. You're taking a positive step by measuring and monitoring.
             
-            I strongly recommend implementing a structured plan combining dietary modifications, regular physical activity, 
-            and stress management. Small, consistent changes will compound over time to create significant improvements.
+            Consider creating a structured fitness and nutrition plan. Combining regular exercise, balanced meals, 
+            and adequate rest can help you work toward your goals over time.
+            
+            *Disclaimer: This app provides informational content only and is not medical advice. 
+            Consult a healthcare professional for personalized health guidance.*
         """.trimIndent()
     }
 }
 
 private fun generateRecommendations(whrValue: Float): List<Recommendation> {
-    val baseRecommendations = listOf(
+    return listOf(
         Recommendation(
-            title = "Nutrition Optimization",
-            subtitle = "Personalized meal planning",
-            details = "Focus on whole foods, lean proteins, and fiber-rich vegetables. Aim for a moderate caloric deficit if needed, prioritizing nutrient density over restriction.",
+            title = "Nutrition Tracking",
+            subtitle = "Monitor your meals",
+            details = "Track your daily food intake to understand your eating patterns. Focus on whole foods, lean proteins, and fiber-rich vegetables for balanced nutrition.",
             icon = "🥗",
             color = Mint,
             actionItems = listOf(
-                "Increase protein to 0.8-1g per lb body weight",
-                "Add 2-3 servings of vegetables per meal",
-                "Stay hydrated with 8-10 glasses of water daily"
+                "Log your meals consistently",
+                "Include variety in your diet",
+                "Stay hydrated throughout the day"
             )
         ),
         Recommendation(
-            title = "Exercise Protocol",
-            subtitle = "Targeted fitness routine",
-            details = "Combine strength training with cardiovascular exercise for optimal results. Focus on compound movements and progressive overload.",
+            title = "Fitness Routine",
+            subtitle = "Stay active",
+            details = "Regular physical activity is an important part of a healthy lifestyle. Consider combining different types of exercise for variety and enjoyment.",
             icon = "💪",
             color = Coral,
             actionItems = listOf(
-                "3-4 strength training sessions per week",
-                "150 minutes of moderate cardio weekly",
-                "Include core strengthening exercises"
+                "Find activities you enjoy",
+                "Set realistic fitness goals",
+                "Track your workout progress"
             )
         ),
         Recommendation(
-            title = "Sleep & Recovery",
-            subtitle = "Optimize rest for results",
-            details = "Quality sleep is crucial for hormonal balance and recovery. Aim for 7-9 hours of consistent sleep nightly.",
+            title = "Rest & Recovery",
+            subtitle = "Prioritize sleep",
+            details = "Quality rest is an essential part of any fitness routine. Aim for consistent sleep patterns to support your overall wellness goals.",
             icon = "😴",
             color = Lavender,
             actionItems = listOf(
-                "Maintain consistent sleep schedule",
-                "Create a relaxing bedtime routine",
+                "Maintain a regular sleep schedule",
+                "Create a relaxing evening routine",
                 "Limit screen time before bed"
+            )
+        ),
+        Recommendation(
+            title = "Progress Tracking",
+            subtitle = "Monitor your journey",
+            details = "Keep track of your measurements over time to see how your lifestyle changes are working for you. Remember, progress takes time and consistency.",
+            icon = "📊",
+            color = NeonPurple,
+            actionItems = listOf(
+                "Take regular measurements",
+                "Log your progress in the app",
+                "Celebrate small wins along the way"
             )
         )
     )
-    
-    return if (whrValue >= 0.95f) {
-        baseRecommendations + Recommendation(
-            title = "Medical Consultation",
-            subtitle = "Professional health assessment",
-            details = "Consider scheduling a check-up with your healthcare provider to assess metabolic health markers and create a comprehensive health plan.",
-            icon = "⚕️",
-            color = NeonPurple,
-            actionItems = listOf(
-                "Schedule annual physical exam",
-                "Discuss metabolic health screening",
-                "Review current medications if applicable"
-            )
-        )
-    } else {
-        baseRecommendations
-    }
 }

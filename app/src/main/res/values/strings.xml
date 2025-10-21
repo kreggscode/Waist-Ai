@@ -30,7 +30,7 @@
     
     <!-- AI -->
     <string name="ai_name">Polynational AI</string>
-    <string name="ai_tagline">Your Personal Health Coach</string>
+    <string name="ai_tagline">Your Fitness Tracking Assistant</string>
     <string name="ai_analyzing">Analyzing your data…</string>
     
     <!-- Nutrition -->
