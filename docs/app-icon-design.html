@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaistAI - App Icon Design</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+        }
+        
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .icon-container {
+            text-align: center;
+        }
+        
+        .icon-wrapper {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .icon-label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+        
+        .icon-size {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        
+        .download-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+        }
+        
+        .download-btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .instructions {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        
+        .instructions ol {
+            color: #4a5568;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 WaistAI App Icon</h1>
+        <p class="subtitle">Premium AI-Powered Health Tracking Icon Design</p>
+        
+        <div class="icon-grid">
+            <!-- 512x512 Icon -->
+            <div class="icon-container">
+                <div class="icon-wrapper">
+                    <svg width="200" height="200" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background Gradient -->
+                        <defs>
+                            <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF7A8A;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#C9B2FF;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7BE6C3;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF00FF;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#8800FF;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#00FFFF;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            
+                            <clipPath id="roundedCorners">
+                                <rect x="0" y="0" width="512" height="512" rx="110" ry="110"/>
+                            </clipPath>
+                        </defs>
+                        
+                        <!-- Background with rounded corners -->
+                        <rect width="512" height="512" rx="110" fill="url(#bgGradient)"/>
+                        
+                        <!-- Waist/Hip Measurement Circle (Outer) -->
+                        <circle cx="256" cy="256" r="160" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="8"/>
+                        
+                        <!-- Waist/Hip Measurement Circle (Inner) -->
+                        <circle cx="256" cy="256" r="130" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="6"/>
+                        
+                        <!-- AI Brain Icon -->
+                        <g transform="translate(256, 200)" filter="url(#glow)">
+                            <!-- Brain outline -->
+                            <path d="M -40,-20 Q -50,-40 -30,-50 Q -10,-55 0,-50 Q 10,-55 30,-50 Q 50,-40 40,-20 Q 45,0 40,20 Q 30,35 10,40 Q 0,42 -10,40 Q -30,35 -40,20 Q -45,0 -40,-20 Z" 
+                                  fill="url(#aiGradient)" stroke="white" stroke-width="3"/>
+                            
+                            <!-- Brain details -->
+                            <path d="M -25,-15 Q -20,-25 -10,-20" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
+                            <path d="M 10,-20 Q 20,-25 25,-15" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
+                            <path d="M -20,0 Q -15,10 -5,5" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
+                            <path d="M 5,5 Q 15,10 20,0" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
+                            <circle cx="0" cy="0" r="3" fill="white"/>
+                        </g>
+                        
+                        <!-- Food/Nutrition Icon -->
+                        <g transform="translate(256, 320)">
+                            <!-- Plate -->
+                            <ellipse cx="0" cy="0" rx="60" ry="15" fill="white" opacity="0.9"/>
+                            <ellipse cx="0" cy="-3" rx="60" ry="15" fill="rgba(255,255,255,0.7)"/>
+                            
+                            <!-- Food items -->
+                            <!-- Apple -->
+                            <circle cx="-25" cy="-15" r="12" fill="#FF7A8A"/>
+                            <path d="M -25,-27 Q -23,-32 -20,-30" fill="#7BE6C3" stroke="none"/>
+                            
+                            <!-- Broccoli -->
+                            <circle cx="0" cy="-18" r="8" fill="#7BE6C3"/>
+                            <circle cx="-5" cy="-22" r="6" fill="#7BE6C3"/>
+                            <circle cx="5" cy="-22" r="6" fill="#7BE6C3"/>
+                            <rect x="-2" y="-10" width="4" height="10" fill="#6BC9A8"/>
+                            
+                            <!-- Protein -->
+                            <ellipse cx="25" cy="-15" rx="13" ry="10" fill="#C9B2FF"/>
+                        </g>
+                        
+                        <!-- Measurement Tape Accent -->
+                        <g opacity="0.6">
+                            <path d="M 100,256 Q 100,150 180,120" fill="none" stroke="white" stroke-width="12" stroke-dasharray="15,10" stroke-linecap="round"/>
+                            <path d="M 412,256 Q 412,150 332,120" fill="none" stroke="white" stroke-width="12" stroke-dasharray="15,10" stroke-linecap="round"/>
+                        </g>
+                        
+                        <!-- Sparkles/Stars for AI effect -->
+                        <g fill="white" opacity="0.9">
+                            <circle cx="140" cy="140" r="4"/>
+                            <circle cx="372" cy="140" r="4"/>
+                            <circle cx="140" cy="372" r="4"/>
+                            <circle cx="372" cy="372" r="4"/>
+                            
+                            <path d="M 180,100 L 182,108 L 190,110 L 182,112 L 180,120 L 178,112 L 170,110 L 178,108 Z"/>
+                            <path d="M 332,100 L 334,108 L 342,110 L 334,112 L 332,120 L 330,112 L 322,110 L 330,108 Z"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="icon-label">App Icon</div>
+                <div class="icon-size">512×512px</div>
+            </div>
+            
+            <!-- 192x192 Icon -->
+            <div class="icon-container">
+                <div class="icon-wrapper">
+                    <svg width="150" height="150" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="bgGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF7A8A;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#C9B2FF;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7BE6C3;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="aiGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF00FF;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#8800FF;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#00FFFF;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="512" height="512" rx="110" fill="url(#bgGradient2)"/>
+                        <circle cx="256" cy="256" r="160" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="8"/>
+                        <circle cx="256" cy="256" r="130" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="6"/>
+                        <g transform="translate(256, 200)">
+                            <path d="M -40,-20 Q -50,-40 -30,-50 Q -10,-55 0,-50 Q 10,-55 30,-50 Q 50,-40 40,-20 Q 45,0 40,20 Q 30,35 10,40 Q 0,42 -10,40 Q -30,35 -40,20 Q -45,0 -40,-20 Z" 
+                                  fill="url(#aiGradient2)" stroke="white" stroke-width="3"/>
+                            <circle cx="0" cy="0" r="3" fill="white"/>
+                        </g>
+                        <g transform="translate(256, 320)">
+                            <ellipse cx="0" cy="0" rx="60" ry="15" fill="white" opacity="0.9"/>
+                            <circle cx="-25" cy="-15" r="12" fill="#FF7A8A"/>
+                            <circle cx="0" cy="-18" r="8" fill="#7BE6C3"/>
+                            <ellipse cx="25" cy="-15" rx="13" ry="10" fill="#C9B2FF"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="icon-label">Launcher Icon</div>
+                <div class="icon-size">192×192px</div>
+            </div>
+        </div>
+        
+        <div class="download-section">
+            <h2 style="margin-top: 0;">📥 Ready to Use!</h2>
+            <p>Right-click on any icon above and select "Save Image As..." to download</p>
+            <p style="font-size: 14px; opacity: 0.9;">Or use the Android Asset Studio link below for all sizes</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>🎨 How to Add This Icon to Your App</h3>
+            <ol>
+                <li><strong>Generate All Sizes:</strong> Visit <a href="https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html" target="_blank">Android Asset Studio</a></li>
+                <li><strong>Upload:</strong> Use the SVG code from this page or screenshot the 512×512 icon</li>
+                <li><strong>Configure:</strong> Set shape to "None" (we have rounded corners built-in)</li>
+                <li><strong>Download:</strong> Get the complete res/ folder with all density sizes</li>
+                <li><strong>Replace:</strong> Copy the downloaded files to your <code>app/src/main/res/</code> folder</li>
+                <li><strong>Update:</strong> Ensure your <code>AndroidManifest.xml</code> references <code>@mipmap/ic_launcher</code></li>
+            </ol>
+            
+            <h3>🎯 Icon Design Features</h3>
+            <ul style="color: #4a5568; line-height: 1.8;">
+                <li><strong>Gradient Background:</strong> Coral → Lavender → Mint (matches app theme)</li>
+                <li><strong>AI Brain:</strong> Neon gradient representing AI intelligence</li>
+                <li><strong>Measurement Circles:</strong> Represents waist/hip ratio tracking</li>
+                <li><strong>Food Plate:</strong> Apple, broccoli, protein - nutrition tracking</li>
+                <li><strong>Measurement Tape:</strong> Dashed lines showing body measurement</li>
+                <li><strong>Sparkles:</strong> AI magic and premium feel</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Add download functionality
+        document.querySelectorAll('svg').forEach((svg, index) => {
+            svg.style.cursor = 'pointer';
+            svg.addEventListener('click', function() {
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement('canvas');
+                const size = index === 0 ? 512 : 192;
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                    canvas.toBlob(function(blob) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `waistai-icon-${size}x${size}.png`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    });
+                };
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            });
+        });
+    </script>
+</body>
+</html>

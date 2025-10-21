@@ -55,51 +55,14 @@ fun ChatScreen(
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     
-    Box(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(WindowInsets.systemBars.asPaddingValues())
-        ) {
-            // Header
+            .imePadding(),
+        topBar = {
             ChatHeader(onBackClick = onBackClick)
-            
-            // Messages
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(vertical = 16.dp),
-                reverseLayout = false
-            ) {
-                items(messages) { message ->
-                    ChatMessageItem(message = message)
-                }
-                
-                if (isTyping) {
-                    item {
-                        TypingIndicator()
-                    }
-                }
-                
-                // Quick suggestions at the bottom
-                if (messages.size == 1) {
-                    item {
-                        QuickSuggestions(
-                            onSuggestionClick = { suggestion ->
-                                inputText = suggestion
-                            }
-                        )
-                    }
-                }
-            }
-            
-            // Input field
+        },
+        bottomBar = {
             ChatInputField(
                 value = inputText,
                 onValueChange = { inputText = it },
@@ -135,6 +98,38 @@ fun ChatScreen(
                     }
                 }
             )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        // Messages
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            reverseLayout = false
+        ) {
+            items(messages) { message ->
+                ChatMessageItem(message = message)
+            }
+            
+            if (isTyping) {
+                item {
+                    TypingIndicator()
+                }
+            }
+            
+            // Quick suggestions at the bottom
+            if (messages.size == 1) {
+                item {
+                    QuickSuggestions(
+                        onSuggestionClick = { suggestion ->
+                            inputText = suggestion
+                        }
+                    )
+                }
+            }
         }
     }
 }
