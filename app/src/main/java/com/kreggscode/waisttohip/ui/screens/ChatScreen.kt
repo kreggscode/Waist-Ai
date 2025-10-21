@@ -64,7 +64,6 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(WindowInsets.systemBars.asPaddingValues())
-                .imePadding()
         ) {
             // Header
             ChatHeader(onBackClick = onBackClick)
@@ -486,6 +485,7 @@ fun ChatInputField(
                             colors = if (value.isNotBlank()) GradientNeon else listOf(Color.Gray, Color.Gray)
                         )
                     )
+                    .animateContentSize()
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Send,

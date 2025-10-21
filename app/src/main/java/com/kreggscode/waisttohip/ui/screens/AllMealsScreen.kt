@@ -78,7 +78,7 @@ fun AllMealsScreen(
                 indicator = { tabPositions ->
                     if (selectedTab < tabPositions.size) {
                         TabRowDefaults.SecondaryIndicator(
-                            modifier = Modifier,
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
                             color = Mint,
                             height = 3.dp
                         )

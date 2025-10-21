@@ -4,7 +4,9 @@
 
 ### Track Your Body Metrics • Scan Your Meals • Get AI Insights
 
-[![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip)
+<a href="https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80"/>
+</a>
 
 <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
 <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
@@ -28,8 +30,8 @@
 ### 🍽️ **Smart Food Scanning**
 - **Camera Scanner** - Instantly scan meals and get nutrition data
 - **Receipt Scanner** - Upload grocery receipts for automatic logging
-- **Email Integration** - Forward meal emails for easy tracking
 - **Macro Breakdown** - Detailed protein, carbs, and fat analysis
+- **Manual Entry** - Add meals manually with detailed nutrition info
 
 ### 🤖 **AI Health Coach**
 - **Personalized Insights** - Get tailored health recommendations
@@ -114,8 +116,8 @@
 
 ### 5. **Food Scanner**
 - **Camera Scanner**: Real-time scanning with animated overlay
-- **Email Integration**: Forward meal emails to scan@curvefuel.ai
 - **Receipt Scanner**: Upload grocery/restaurant receipts
+- **Manual Entry**: Add meals with custom nutrition data
 - **Results Screen**: 
   - Nutrition summary with animated progress bars
   - Editable food items with quantity selectors
@@ -400,11 +402,15 @@ spring(
 
 ### Ready to start your health journey?
 
-[![Get it on Google Play](https://img.shields.io/badge/Download_on-Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white&labelColor=34A853)](https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip)
+<a href="https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="100"/>
+</a>
 
 **Also check out our other apps:**
 
-[![More Apps](https://img.shields.io/badge/More_Apps_by_KreggsCode-4285F4?style=for-the-badge&logo=android&logoColor=white)](https://play.google.com/store/apps/dev?id=4822923174061161987)
+<a href="https://play.google.com/store/apps/dev?id=4822923174061161987">
+  <img src="https://img.shields.io/badge/More_Apps_by_KreggsCode-4285F4?style=for-the-badge&logo=android&logoColor=white&labelColor=1a73e8" alt="More Apps" height="50"/>
+</a>
 
 </div>
 
