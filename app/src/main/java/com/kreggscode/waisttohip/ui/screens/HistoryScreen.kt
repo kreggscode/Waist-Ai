@@ -15,7 +15,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,9 @@ fun HistoryScreen(
 ) {
     val measurements by viewModel.measurements.collectAsState()
     val hasHistory = measurements.isNotEmpty()
+    var selectedFilter by remember { mutableStateOf("All") }
+    var showFilterDialog by remember { mutableStateOf(false) }
+    val filters = listOf("All", "Week", "Month", "Year")
     
     // Convert measurements to history items
     val historyItems = measurements.map { measurement ->
@@ -52,11 +57,15 @@ fun HistoryScreen(
         )
     }
     
-    var itemsToShow by remember { mutableStateOf(historyItems) }
-    
-    // Update items when measurements change
-    LaunchedEffect(measurements) {
-        itemsToShow = historyItems
+    // Filter items based on selected filter
+    val itemsToShow = remember(historyItems, selectedFilter) {
+        val now = java.time.LocalDateTime.now()
+        when (selectedFilter) {
+            "Week" -> historyItems.filter { it.date.isAfter(now.minusWeeks(1)) }
+            "Month" -> historyItems.filter { it.date.isAfter(now.minusMonths(1)) }
+            "Year" -> historyItems.filter { it.date.isAfter(now.minusYears(1)) }
+            else -> historyItems
+        }
     }
     
     Box(
@@ -92,11 +101,11 @@ fun HistoryScreen(
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { showFilterDialog = true }) {
                         Icon(
                             imageVector = Icons.Rounded.FilterList,
                             contentDescription = "Filter",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = if (selectedFilter != "All") Mint else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -129,17 +138,77 @@ fun HistoryScreen(
                     )
                 }
                 
-                // History Items with delete functionality
+                // History Items
                 items(itemsToShow) { item ->
                     HistoryItemCard(
                         item = item,
-                        onDelete = {
-                            itemsToShow = itemsToShow.filter { it != item }
-                        }
+                        onDelete = { /* TODO: Implement delete via ViewModel */ }
                     )
                 }
             }
         }
+    }
+    
+    // Filter Dialog
+    if (showFilterDialog) {
+        AlertDialog(
+            onDismissRequest = { showFilterDialog = false },
+            title = {
+                Text(
+                    text = "Filter Measurements",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    filters.forEach { filter ->
+                        FilterChip(
+                            selected = selectedFilter == filter,
+                            onClick = {
+                                selectedFilter = filter
+                                showFilterDialog = false
+                            },
+                            label = {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = when(filter) {
+                                            "All" -> "📅 All Time"
+                                            "Week" -> "📆 Last Week"
+                                            "Month" -> "🗓️ Last Month"
+                                            "Year" -> "📊 Last Year"
+                                            else -> filter
+                                        },
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    if (selectedFilter == filter) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null,
+                                            tint = Mint,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showFilterDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
     }
 }
 
@@ -159,7 +228,7 @@ fun StatsSummaryCard(items: List<HistoryItem>) {
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 8.dp),
         cornerRadius = 24.dp,
-        glassColor = GlassWhite.copy(alpha = 0.95f)
+        glassColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.98f)
     ) {
         Column(
             modifier = Modifier
@@ -268,7 +337,7 @@ fun ProgressChartCard(items: List<HistoryItem>) {
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 8.dp),
         cornerRadius = 24.dp,
-        glassColor = GlassWhite.copy(alpha = 0.95f)
+        glassColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.98f)
     ) {
         Column(
             modifier = Modifier
@@ -311,18 +380,29 @@ fun ProgressChartCard(items: List<HistoryItem>) {
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Simple progress visualization
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "📊",
-                    fontSize = 48.sp
+            // Animated line chart
+            if (items.isNotEmpty()) {
+                WHRLineChart(
+                    items = items.take(10).reversed(), // Show last 10 measurements, oldest to newest
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
                 )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "📊",
+                        fontSize = 48.sp
+                    )
+                }
             }
+            
+            Spacer(modifier = Modifier.height(8.dp))
             
             Text(
                 text = "Track your progress over time",
@@ -473,3 +553,184 @@ data class HistoryItem(
     val whr: Float,
     val status: String
 )
+
+@Composable
+fun WHRLineChart(
+    items: List<HistoryItem>,
+    modifier: Modifier = Modifier
+) {
+    var animationProgress by remember { mutableStateOf(0f) }
+    
+    LaunchedEffect(items) {
+        animationProgress = 0f
+        animate(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+        ) { value, _ ->
+            animationProgress = value
+        }
+    }
+    
+    Column(modifier = modifier) {
+        Canvas(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(vertical = 8.dp)) {
+        if (items.isEmpty()) return@Canvas
+        
+        val whrValues = items.map { it.whr }
+        val minWhr = (whrValues.minOrNull() ?: 0.7f) - 0.05f
+        val maxWhr = (whrValues.maxOrNull() ?: 1.0f) + 0.05f
+        val whrRange = maxWhr - minWhr
+        
+        val chartWidth = size.width - 40.dp.toPx()
+        val chartHeight = size.height - 40.dp.toPx()
+        val startX = 20.dp.toPx()
+        val startY = 20.dp.toPx()
+        
+        // Calculate points
+        val points = items.mapIndexed { index, item ->
+            val x = startX + (index.toFloat() / (items.size - 1).coerceAtLeast(1)) * chartWidth
+            val normalizedWhr = (item.whr - minWhr) / whrRange
+            val y = startY + chartHeight - (normalizedWhr * chartHeight)
+            androidx.compose.ui.geometry.Offset(x, y)
+        }
+        
+        // Draw gradient fill under the line
+        if (points.size > 1) {
+            val animatedPoints = points.take((points.size * animationProgress).toInt().coerceAtLeast(2))
+            
+            val fillPath = androidx.compose.ui.graphics.Path().apply {
+                moveTo(animatedPoints.first().x, startY + chartHeight)
+                animatedPoints.forEach { point ->
+                    lineTo(point.x, point.y)
+                }
+                lineTo(animatedPoints.last().x, startY + chartHeight)
+                close()
+            }
+            
+            drawPath(
+                path = fillPath,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF14B8A6).copy(alpha = 0.3f),
+                        Color(0xFF14B8A6).copy(alpha = 0.05f)
+                    ),
+                    startY = startY,
+                    endY = startY + chartHeight
+                )
+            )
+        }
+        
+        // Draw the line
+        if (points.size > 1) {
+            val animatedPoints = points.take((points.size * animationProgress).toInt().coerceAtLeast(2))
+            
+            val linePath = androidx.compose.ui.graphics.Path().apply {
+                moveTo(animatedPoints.first().x, animatedPoints.first().y)
+                for (i in 1 until animatedPoints.size) {
+                    val prevPoint = animatedPoints[i - 1]
+                    val currentPoint = animatedPoints[i]
+                    
+                    // Smooth curve using quadratic bezier
+                    val controlX = (prevPoint.x + currentPoint.x) / 2
+                    quadraticBezierTo(
+                        controlX, prevPoint.y,
+                        controlX, (prevPoint.y + currentPoint.y) / 2
+                    )
+                    quadraticBezierTo(
+                        controlX, currentPoint.y,
+                        currentPoint.x, currentPoint.y
+                    )
+                }
+            }
+            
+            drawPath(
+                path = linePath,
+                color = Color(0xFF14B8A6),
+                style = Stroke(
+                    width = 3.dp.toPx(),
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round
+                )
+            )
+        }
+        
+        // Draw points
+        val animatedPointCount = (points.size * animationProgress).toInt()
+        points.take(animatedPointCount).forEachIndexed { index, point ->
+            // Outer circle (glow effect)
+            drawCircle(
+                color = Color(0xFF14B8A6).copy(alpha = 0.2f),
+                radius = 8.dp.toPx(),
+                center = point
+            )
+            // Inner circle
+            drawCircle(
+                color = Color(0xFF14B8A6),
+                radius = 4.dp.toPx(),
+                center = point
+            )
+            // Center dot
+            drawCircle(
+                color = Color.White,
+                radius = 2.dp.toPx(),
+                center = point
+            )
+        }
+        
+        // Draw reference lines for healthy zones
+        val healthyThreshold = 0.85f
+        if (healthyThreshold in minWhr..maxWhr) {
+            val normalizedHealthy = (healthyThreshold - minWhr) / whrRange
+            val healthyY = startY + chartHeight - (normalizedHealthy * chartHeight)
+            
+            drawLine(
+                color = Color(0xFF10B981).copy(alpha = 0.3f),
+                start = androidx.compose.ui.geometry.Offset(startX, healthyY),
+                end = androidx.compose.ui.geometry.Offset(startX + chartWidth, healthyY),
+                strokeWidth = 1.dp.toPx(),
+                pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
+                    floatArrayOf(10f, 10f)
+                )
+            )
+        }
+    }
+        
+        // Date labels
+        if (items.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Show first, middle, and last dates
+                val dateFormatter = DateTimeFormatter.ofPattern("MMM dd")
+                
+                Text(
+                    text = items.first().date.format(dateFormatter),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                
+                if (items.size > 2) {
+                    Text(
+                        text = items[items.size / 2].date.format(dateFormatter),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                
+                if (items.size > 1) {
+                    Text(
+                        text = items.last().date.format(dateFormatter),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}

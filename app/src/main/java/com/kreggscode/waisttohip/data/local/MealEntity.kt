@@ -8,6 +8,7 @@ data class MealEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val timestamp: Long,
+    val mealType: String, // "Breakfast", "Lunch", "Dinner", "Snack"
     val totalCalories: Int,
     val totalProtein: Int,
     val totalCarbs: Int,

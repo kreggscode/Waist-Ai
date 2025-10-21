@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -53,6 +54,7 @@ fun MeasureScreen(
     var waistValue by remember { mutableFloatStateOf(32f) }
     var hipValue by remember { mutableFloatStateOf(38f) }
     var useCamera by remember { mutableStateOf(false) }
+    var useInches by remember { mutableStateOf(true) } // true = inches, false = cm
     
     AnimatedContent(
         targetState = currentStep,
@@ -93,7 +95,9 @@ fun MeasureScreen(
                     onWaistChange = { waistValue = it },
                     onHipChange = { hipValue = it },
                     onNext = { currentStep = 2 },
-                    onBackClick = { currentStep = 0 }
+                    onBackClick = { currentStep = 0 },
+                    useInches = useInches,
+                    onUnitToggle = { useInches = !useInches }
                 )
             }
             2 -> ResultScreen(
@@ -101,7 +105,8 @@ fun MeasureScreen(
                 hipValue = hipValue,
                 onAnalysisClick = onResultsClick,
                 onBackClick = { currentStep = 1 },
-                viewModel = viewModel
+                viewModel = viewModel,
+                useInches = useInches
             )
             3 -> ComingSoonScreen(
                 onBackClick = { currentStep = 0 }
@@ -489,71 +494,99 @@ fun ManualInputScreen(
     onWaistChange: (Float) -> Unit,
     onHipChange: (Float) -> Unit,
     onNext: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    useInches: Boolean = true,
+    onUnitToggle: () -> Unit = {}
 ) {
+    val unit = if (useInches) "inches" else "cm"
+    val unitSymbol = if (useInches) "in" else "cm"
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(WindowInsets.systemBars.asPaddingValues())
-                .padding(20.dp)
-                .padding(bottom = 120.dp),
+                .padding(WindowInsets.systemBars.asPaddingValues()),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onSurface
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Text(
+                        text = "Enter Measurements",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
+                    Surface(
+                        onClick = onUnitToggle,
+                        shape = RoundedCornerShape(12.dp),
+                        color = Mint.copy(alpha = 0.15f)
+                    ) {
+                        Text(
+                            text = "📏 $unitSymbol",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Mint
+                        )
+                    }
                 }
-                Text(
-                    text = "Enter Measurements",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.width(48.dp))
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            item {
+                Spacer(modifier = Modifier.height(40.dp))
+            }
             
             // Waist Input
-            MeasurementInputCard(
+            item {
+                MeasurementInputCard(
                 label = "Waist",
                 value = waistValue,
                 onChange = onWaistChange,
                 gradient = listOf(Coral, CoralLight),
-                icon = "📏",
-                unit = "inches"
-            )
+                    icon = "📏",
+                    unit = unit
+                )
+            }
             
-            Spacer(modifier = Modifier.height(20.dp))
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
             
             // Hip Input
-            MeasurementInputCard(
+            item {
+                MeasurementInputCard(
                 label = "Hip",
                 value = hipValue,
                 onChange = onHipChange,
                 gradient = listOf(Mint, MintLight),
-                icon = "📐",
-                unit = "inches"
-            )
+                    icon = "📐",
+                    unit = unit
+                )
+            }
             
-            Spacer(modifier = Modifier.weight(1f))
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
             
             // Tips Card
-            GlassCard(
+            item {
+                GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = 20.dp,
                 glassColor = Lavender.copy(alpha = 0.05f),
@@ -585,16 +618,21 @@ fun ManualInputScreen(
                     }
                 }
             }
+            }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             
             // Continue Button
-            AnimatedGradientButton(
+            item {
+                AnimatedGradientButton(
                 text = "Calculate WHR",
                 onClick = onNext,
-                modifier = Modifier.fillMaxWidth(),
-                gradientColors = GradientNeon
-            )
+                    modifier = Modifier.fillMaxWidth(),
+                    gradientColors = GradientNeon
+                )
+            }
         }
     }
 }
@@ -713,10 +751,12 @@ fun ResultScreen(
     hipValue: Float,
     onAnalysisClick: () -> Unit,
     onBackClick: () -> Unit,
-    viewModel: com.kreggscode.waisttohip.ui.viewmodels.MeasureViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+    viewModel: com.kreggscode.waisttohip.ui.viewmodels.MeasureViewModel = androidx.hilt.navigation.compose.hiltViewModel(),
+    useInches: Boolean = true
 ) {
     val scope = rememberCoroutineScope()
     val context = androidx.compose.ui.platform.LocalContext.current
+    val unit = if (useInches) "in" else "cm"
     val whrValue = waistValue / hipValue
     val whrStatus = when {
         whrValue < 0.85f -> "Healthy"
@@ -748,44 +788,66 @@ fun ResultScreen(
                 )
             )
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(WindowInsets.systemBars.asPaddingValues())
-                .padding(20.dp),
+                .padding(WindowInsets.systemBars.asPaddingValues()),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextPrimary
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary
+                        )
+                    }
+                    Text(
+                        text = "Your Results",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold
                     )
-                }
-                Text(
-                    text = "Your Results",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-                IconButton(onClick = { }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Share,
-                        contentDescription = "Share",
-                        tint = TextPrimary
-                    )
+                    IconButton(onClick = {
+                        val shareText = """
+                            My WaistAI Results 📊
+                            
+                            Waist: ${String.format("%.1f", waistValue)} $unit
+                            Hip: ${String.format("%.1f", hipValue)} $unit
+                            WHR: ${String.format("%.2f", whrValue)}
+                            Status: $whrStatus
+                            
+                            Track your health with WaistAI!
+                        """.trimIndent()
+                        
+                        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(android.content.Intent.EXTRA_TEXT, shareText)
+                        }
+                        context.startActivity(android.content.Intent.createChooser(intent, "Share Results"))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Share,
+                            contentDescription = "Share",
+                            tint = TextPrimary
+                        )
+                    }
                 }
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            item {
+                Spacer(modifier = Modifier.height(40.dp))
+            }
             
             // Ice Cream Progress Ring - The star visualization!
-            AnimatedVisibility(
+            item {
+                AnimatedVisibility(
                 visible = showResult,
                 enter = scaleIn(
                     animationSpec = spring(
@@ -799,41 +861,49 @@ fun ResultScreen(
                     hipProgress = (hipValue - 25) / 45, // Normalize to 0-1
                     whrValue = whrValue,
                     whrStatus = whrStatus,
-                    modifier = Modifier.padding(20.dp)
-                )
+                        modifier = Modifier.padding(20.dp)
+                    )
+                }
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+            }
             
             // Detailed Stats
-            Row(
+            item {
+                Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 StatItem(
                     label = "Waist",
                     value = String.format("%.1f", waistValue),
-                    unit = "in",
+                    unit = unit,
                     color = Coral
                 )
                 StatItem(
                     label = "Hip",
                     value = String.format("%.1f", hipValue),
-                    unit = "in",
+                    unit = unit,
                     color = Mint
                 )
                 StatItem(
                     label = "WHR",
                     value = String.format("%.2f", whrValue),
                     unit = "",
-                    color = Lavender
-                )
+                        color = Lavender
+                    )
+                }
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+            }
             
             // AI Analysis Preview
-            GlassCard(
+            item {
+                GlassCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onAnalysisClick() },
@@ -885,23 +955,99 @@ fun ResultScreen(
                         contentDescription = null,
                         tint = NeonPurple,
                         modifier = Modifier.size(24.dp)
-                    )
+                        )
+                    }
                 }
             }
             
-            Spacer(modifier = Modifier.weight(1f))
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+            
+            // WHR Explanation Card
+            item {
+                GlassCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    cornerRadius = 20.dp,
+                    glassColor = Lavender.copy(alpha = 0.05f),
+                    borderGradient = listOf(Lavender.copy(alpha = 0.3f), LavenderLight.copy(alpha = 0.1f))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "📊",
+                                fontSize = 24.sp
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = "Understanding WHR",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.height(12.dp))
+                        
+                        Text(
+                            text = "Waist-to-Hip Ratio (WHR) is calculated by dividing your waist measurement by your hip measurement.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        
+                        Spacer(modifier = Modifier.height(12.dp))
+                        
+                        Text(
+                            text = "Formula: WHR = Waist ÷ Hip",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Mint
+                        )
+                        
+                        Spacer(modifier = Modifier.height(12.dp))
+                        
+                        Text(
+                            text = "Health Guidelines:",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            WHRGuideline("✅ Healthy", "< 0.85", HealthyGreen)
+                            WHRGuideline("⚠️ Moderate", "0.85 - 0.95", ModerateYellow)
+                            WHRGuideline("🚨 High Risk", "> 0.95", HighRisk)
+                        }
+                    }
+                }
+            }
+            
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             
             // Action Buttons
-            AnimatedGradientButton(
+            item {
+                AnimatedGradientButton(
                 text = "View AI Analysis",
                 onClick = onAnalysisClick,
-                modifier = Modifier.fillMaxWidth(),
-                gradientColors = GradientNeon
-            )
+                    modifier = Modifier.fillMaxWidth(),
+                    gradientColors = GradientNeon
+                )
+            }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             
-            OutlinedButton(
+            item {
+                OutlinedButton(
                 onClick = {
                     scope.launch {
                         try {
@@ -924,12 +1070,11 @@ fun ResultScreen(
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
-            ) {
-                Text("Save to History")
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+                ) {
+                    Text("Save to History")
+                }
             }
-            
-            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }
@@ -967,6 +1112,37 @@ fun StatItem(
                     modifier = Modifier.padding(bottom = 4.dp, start = 2.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun WHRGuideline(
+    label: String,
+    range: String,
+    color: Color
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = color.copy(alpha = 0.15f)
+        ) {
+            Text(
+                text = range,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
         }
     }
 }

@@ -153,7 +153,7 @@ class AIRepository @Inject constructor(
             val request = ChatCompletionRequest(
                 model = "openai",
                 messages = messages,
-                temperature = 0.5f  // Lower temperature for more consistent, accurate results
+                temperature = 1.0f  // Set to 1.0 for Pollinations AI vision capabilities
             )
             
             val response = aiService.chatCompletion(request)

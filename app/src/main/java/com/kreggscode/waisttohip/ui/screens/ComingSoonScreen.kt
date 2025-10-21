@@ -126,7 +126,7 @@ fun ComingSoonScreen(
             GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = 20.dp,
-                glassColor = GlassWhite.copy(alpha = 0.95f)
+                glassColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
             ) {
                 Column(
                     modifier = Modifier

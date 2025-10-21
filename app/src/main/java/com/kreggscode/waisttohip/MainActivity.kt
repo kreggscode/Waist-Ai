@@ -158,6 +158,12 @@ fun CurveAndFuelApp(
                     onChatClick = {
                         navController.navigate(Screen.Chat.route)
                     },
+                    onManualAddClick = {
+                        navController.navigate(Screen.Measure.route)
+                    },
+                    onSeeAllMealsClick = {
+                        navController.navigate(Screen.AllMeals.route)
+                    },
                     themeManager = themeManager,
                     isDarkMode = isDarkMode
                 )
@@ -282,6 +288,59 @@ fun CurveAndFuelApp(
                     }
                 )
             }
+            
+            composable(
+                route = Screen.AllMeals.route,
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(400)
+                    ) + fadeIn(animationSpec = tween(400))
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(400)
+                    ) + fadeOut(animationSpec = tween(400))
+                }
+            ) {
+                AllMealsScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onScanClick = {
+                        navController.navigate("scanner")
+                    }
+                )
+            }
+            
+            composable(
+                route = Screen.ScanResults.route,
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(400)
+                    ) + fadeIn(animationSpec = tween(400))
+                },
+                exitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(400)
+                    ) + fadeOut(animationSpec = tween(400))
+                }
+            ) {
+                ScanResultsScreen(
+                    items = emptyList(),
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onConfirm = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -293,4 +352,6 @@ sealed class Screen(val route: String) {
     object Scanner : Screen("scanner")
     object Chat : Screen("chat")
     object History : Screen("history")
+    object AllMeals : Screen("all_meals")
+    object ScanResults : Screen("scan_results")
 }

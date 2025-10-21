@@ -13,7 +13,7 @@ class ScannerViewModel @Inject constructor(
     private val mealRepository: MealRepository
 ) : ViewModel() {
     
-    suspend fun saveMealToDatabase(items: List<FoodItem>): Long {
-        return mealRepository.saveMeal(items)
+    suspend fun saveMealToDatabase(items: List<FoodItem>, mealType: String? = null): Long {
+        return mealRepository.saveMeal(items, mealType)
     }
 }

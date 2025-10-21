@@ -6,6 +6,7 @@ import com.kreggscode.waisttohip.ui.screens.FoodItem
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,16 +18,18 @@ class MealRepository @Inject constructor(
     
     fun getAllMeals(): Flow<List<MealEntity>> = mealDao.getAllMeals()
     
-    suspend fun saveMeal(items: List<FoodItem>): Long {
+    suspend fun saveMeal(items: List<FoodItem>, customMealType: String? = null): Long {
         val totalCalories = items.sumOf { (it.calories * it.quantity).toInt() }
         val totalProtein = items.sumOf { (it.protein * it.quantity).toInt() }
         val totalCarbs = items.sumOf { (it.carbs * it.quantity).toInt() }
         val totalFat = items.sumOf { (it.fat * it.quantity).toInt() }
         
         val itemsJson = foodItemsToJson(items)
+        val mealType = customMealType ?: determineMealType()
         
         val meal = MealEntity(
             timestamp = System.currentTimeMillis(),
+            mealType = mealType,
             totalCalories = totalCalories,
             totalProtein = totalProtein,
             totalCarbs = totalCarbs,
@@ -35,6 +38,19 @@ class MealRepository @Inject constructor(
         )
         
         return mealDao.insertMeal(meal)
+    }
+    
+    private fun determineMealType(): String {
+        val calendar = Calendar.getInstance()
+        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+        
+        return when (hourOfDay) {
+            in 5..10 -> "Breakfast"
+            in 11..14 -> "Lunch"
+            in 15..17 -> "Snack"
+            in 18..22 -> "Dinner"
+            else -> "Snack"
+        }
     }
     
     suspend fun deleteMeal(meal: MealEntity) {

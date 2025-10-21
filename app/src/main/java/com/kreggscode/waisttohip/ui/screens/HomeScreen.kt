@@ -38,12 +38,72 @@ fun HomeScreen(
     themeManager: com.kreggscode.waisttohip.data.ThemeManager,
     isDarkMode: Boolean,
     onManualAddClick: () -> Unit = {},
+    onSeeAllMealsClick: () -> Unit = {},
     viewModel: com.kreggscode.waisttohip.ui.viewmodels.HomeViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
     val recentMeals by viewModel.recentMeals.collectAsState()
     val recentMeasurements by viewModel.recentMeasurements.collectAsState()
+    val calorieGoal by viewModel.calorieGoal.collectAsState()
+    val caloriePeriod by viewModel.caloriePeriod.collectAsState()
     var greeting by remember { mutableStateOf(getGreeting()) }
     val scope = rememberCoroutineScope()
+    var showManualMealDialog by remember { mutableStateOf(false) }
+    var showCalorieGoalDialog by remember { mutableStateOf(false) }
+    
+    // Calculate today's total calories from meals
+    val todayCalories = remember(recentMeals) {
+        val todayStart = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        
+        recentMeals.filter { it.timestamp >= todayStart }
+            .sumOf { it.totalCalories }
+    }
+    
+    val todayProtein = remember(recentMeals) {
+        val todayStart = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        
+        recentMeals.filter { it.timestamp >= todayStart }
+            .sumOf { it.totalProtein }
+    }
+    
+    val todayCarbs = remember(recentMeals) {
+        val todayStart = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        
+        recentMeals.filter { it.timestamp >= todayStart }
+            .sumOf { it.totalCarbs }
+    }
+    
+    val todayFat = remember(recentMeals) {
+        val todayStart = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        
+        recentMeals.filter { it.timestamp >= todayStart }
+            .sumOf { it.totalFat }
+    }
+    
+    // Get latest measurement data
+    val latestMeasurement = recentMeasurements.firstOrNull()
+    val waistValue = latestMeasurement?.waistInches ?: 32f
+    val hipValue = latestMeasurement?.hipInches ?: 38f
+    val whrValue = latestMeasurement?.whrValue ?: 0.84f
     
     Box(
         modifier = Modifier
@@ -79,34 +139,48 @@ fun HomeScreen(
                     item {
                         AnimatedStatCard(
                             title = "Waist",
-                            value = "32",
+                            value = String.format("%.1f", waistValue),
                             unit = "inches",
-                            icon = Icons.Rounded.Straighten,
+                            icon = "📏",
                             gradient = listOf(Coral, CoralLight),
-                            trend = "+0.5",
-                            isPositive = false
+                            trend = if (recentMeasurements.size > 1) {
+                                val change = waistValue - recentMeasurements[1].waistInches
+                                String.format("%+.1f", change)
+                            } else "+0.0",
+                            isPositive = if (recentMeasurements.size > 1) {
+                                waistValue < recentMeasurements[1].waistInches
+                            } else true
                         )
                     }
                     item {
                         AnimatedStatCard(
                             title = "Hip",
-                            value = "38",
+                            value = String.format("%.1f", hipValue),
                             unit = "inches",
-                            icon = Icons.Rounded.Height,
+                            icon = "📐",
                             gradient = listOf(Mint, MintLight),
-                            trend = "-0.2",
-                            isPositive = true
+                            trend = if (recentMeasurements.size > 1) {
+                                val change = hipValue - recentMeasurements[1].hipInches
+                                String.format("%+.1f", change)
+                            } else "+0.0",
+                            isPositive = if (recentMeasurements.size > 1) {
+                                hipValue < recentMeasurements[1].hipInches
+                            } else true
                         )
                     }
                     item {
                         AnimatedStatCard(
                             title = "WHR",
-                            value = "0.84",
+                            value = String.format("%.2f", whrValue),
                             unit = "ratio",
-                            icon = Icons.Rounded.Analytics,
+                            icon = "🎯",
                             gradient = listOf(Lavender, LavenderLight),
-                            trend = "Healthy",
-                            isPositive = true
+                            trend = when {
+                                whrValue < 0.85f -> "Healthy"
+                                whrValue < 0.95f -> "Moderate"
+                                else -> "High Risk"
+                            },
+                            isPositive = whrValue < 0.85f
                         )
                     }
                 }
@@ -115,11 +189,13 @@ fun HomeScreen(
             // Calorie Summary Strip
             item {
                 CalorieSummaryStrip(
-                    consumed = 1450,
-                    target = 2000,
-                    protein = 65,
-                    carbs = 180,
-                    fat = 45
+                    consumed = todayCalories,
+                    target = calorieGoal,
+                    protein = todayProtein,
+                    carbs = todayCarbs,
+                    fat = todayFat,
+                    period = caloriePeriod,
+                    onEditClick = { showCalorieGoalDialog = true }
                 )
             }
             
@@ -128,13 +204,16 @@ fun HomeScreen(
                 QuickActionsSection(
                     onScanClick = onScanClick,
                     onQuickAddClick = onQuickAddClick,
-                    onManualAddClick = onManualAddClick
+                    onManualAddClick = { showManualMealDialog = true }
                 )
             }
             
             // Recent Meals
             item {
-                RecentMealsSection(meals = recentMeals)
+                RecentMealsSection(
+                    meals = recentMeals,
+                    onSeeAllClick = onSeeAllMealsClick
+                )
             }
             
             // AI Insights Card
@@ -151,6 +230,33 @@ fun HomeScreen(
                 .padding(end = 24.dp, bottom = 140.dp)
         )
     }
+    
+    // Manual Meal Entry Dialog
+    if (showManualMealDialog) {
+        ManualMealDialog(
+            onDismiss = { showManualMealDialog = false },
+            onSave = { mealName, calories, protein, carbs, fat, mealType ->
+                scope.launch {
+                    viewModel.addManualMeal(mealName, calories, protein, carbs, fat, mealType)
+                    showManualMealDialog = false
+                }
+            }
+        )
+    }
+    
+    // Calorie Goal Edit Dialog
+    if (showCalorieGoalDialog) {
+        CalorieGoalDialog(
+            currentGoal = calorieGoal,
+            currentPeriod = caloriePeriod,
+            onDismiss = { showCalorieGoalDialog = false },
+            onSave = { goal, period ->
+                viewModel.updateCalorieGoal(goal)
+                viewModel.updateCaloriePeriod(period)
+                showCalorieGoalDialog = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -159,6 +265,9 @@ fun PremiumHeader(
     isDarkMode: Boolean,
     onThemeToggle: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var showMenu by remember { mutableStateOf(false) }
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -185,6 +294,45 @@ fun PremiumHeader(
             
             Spacer(modifier = Modifier.width(12.dp))
             
+            // Menu Button
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("⭐ Rate App") },
+                        onClick = {
+                            showMenu = false
+                            val intent = android.content.Intent(
+                                android.content.Intent.ACTION_VIEW,
+                                android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip")
+                            )
+                            context.startActivity(intent)
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("📱 More Apps") },
+                        onClick = {
+                            showMenu = false
+                            val intent = android.content.Intent(
+                                android.content.Intent.ACTION_VIEW,
+                                android.net.Uri.parse("https://play.google.com/store/apps/dev?id=4822923174061161987")
+                            )
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+            }
+            
             // Theme Toggle
             PremiumThemeToggle(
                 isDarkMode = isDarkMode,
@@ -199,7 +347,7 @@ fun AnimatedStatCard(
     title: String,
     value: String,
     unit: String,
-    icon: ImageVector,
+    icon: String,
     gradient: List<Color>,
     trend: String,
     isPositive: Boolean
@@ -225,7 +373,7 @@ fun AnimatedStatCard(
             .height(180.dp)
             .scale(scale),
         cornerRadius = 24.dp,
-        glassColor = GlassWhite.copy(alpha = 0.95f)
+        glassColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.98f)
     ) {
         Column(
             modifier = Modifier
@@ -247,11 +395,9 @@ fun AnimatedStatCard(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = title,
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                    Text(
+                        text = icon,
+                        fontSize = 24.sp
                     )
                 }
                 
@@ -307,16 +453,25 @@ fun CalorieSummaryStrip(
     target: Int,
     protein: Int,
     carbs: Int,
-    fat: Int
+    fat: Int,
+    period: String = "daily",
+    onEditClick: () -> Unit = {}
 ) {
     val progress = (consumed.toFloat() / target).coerceIn(0f, 1f)
+    val periodLabel = when(period) {
+        "daily" -> "Today's"
+        "monthly" -> "This Month's"
+        "yearly" -> "This Year's"
+        else -> "Today's"
+    }
     
     GlassCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .clickable(onClick = onEditClick),
         cornerRadius = 20.dp,
-        glassColor = GlassWhite.copy(alpha = 0.95f)
+        glassColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.98f)
     ) {
         Column(
             modifier = Modifier
@@ -328,12 +483,23 @@ fun CalorieSummaryStrip(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = "Today's Calories",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "$periodLabel Calories",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.Rounded.Edit,
+                            contentDescription = "Edit goal",
+                            tint = Mint,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                     Row(
                         verticalAlignment = Alignment.Bottom
                     ) {
@@ -490,12 +656,12 @@ fun QuickActionButton(
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = gradient.map { it.copy(alpha = 0.1f) }
+                        colors = gradient.map { it.copy(alpha = 0.15f) }
                     )
                 )
                 .border(
-                    width = 1.dp,
-                    brush = Brush.linearGradient(colors = gradient.map { it.copy(alpha = 0.3f) }),
+                    width = 1.5.dp,
+                    brush = Brush.linearGradient(colors = gradient.map { it.copy(alpha = 0.5f) }),
                     shape = RoundedCornerShape(20.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -522,7 +688,10 @@ fun QuickActionButton(
 }
 
 @Composable
-fun RecentMealsSection(meals: List<com.kreggscode.waisttohip.data.local.MealEntity> = emptyList()) {
+fun RecentMealsSection(
+    meals: List<com.kreggscode.waisttohip.data.local.MealEntity> = emptyList(),
+    onSeeAllClick: () -> Unit = {}
+) {
     val hasMeals = meals.isNotEmpty()
     
     Column(
@@ -542,7 +711,7 @@ fun RecentMealsSection(meals: List<com.kreggscode.waisttohip.data.local.MealEnti
                 color = MaterialTheme.colorScheme.onBackground
             )
             if (hasMeals) {
-                TextButton(onClick = { }) {
+                TextButton(onClick = onSeeAllClick) {
                     Text("See All", color = Coral)
                 }
             }
@@ -557,10 +726,16 @@ fun RecentMealsSection(meals: List<com.kreggscode.waisttohip.data.local.MealEnti
                 val time = timeFormatter.format(java.util.Date(meal.timestamp))
                 
                 MealItem(
-                    name = "Meal",
+                    name = meal.mealType,
                     calories = meal.totalCalories,
                     time = time,
-                    emoji = "🍽️"
+                    emoji = when(meal.mealType) {
+                        "Breakfast" -> "🍳"
+                        "Lunch" -> "🍱"
+                        "Dinner" -> "🍽️"
+                        "Snack" -> "🍿"
+                        else -> "🍽️"
+                    }
                 )
                 
                 if (meal != meals.last()) {
@@ -812,4 +987,306 @@ private fun getGreeting(): String {
         in 17..20 -> "Good Evening"
         else -> "Good Night"
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ManualMealDialog(
+    onDismiss: () -> Unit,
+    onSave: (String, Int, Int, Int, Int, String) -> Unit
+) {
+    var mealName by remember { mutableStateOf("") }
+    var calories by remember { mutableStateOf("") }
+    var protein by remember { mutableStateOf("") }
+    var carbs by remember { mutableStateOf("") }
+    var fat by remember { mutableStateOf("") }
+    
+    val mealTypes = listOf("Breakfast", "Lunch", "Dinner", "Snack", "Other")
+    val defaultMealType = remember {
+        val hourOfDay = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        when (hourOfDay) {
+            in 5..10 -> "Breakfast"
+            in 11..14 -> "Lunch"
+            in 15..17 -> "Snack"
+            in 18..22 -> "Dinner"
+            else -> "Snack"
+        }
+    }
+    var selectedMealType by remember { mutableStateOf(defaultMealType) }
+    var expandedMealType by remember { mutableStateOf(false) }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Add Meal Manually",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    OutlinedTextField(
+                        value = mealName,
+                        onValueChange = { mealName = it },
+                        label = { Text("Meal Name") },
+                        placeholder = { Text("e.g., Chicken Salad") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(Icons.Rounded.Restaurant, contentDescription = null)
+                        }
+                    )
+                }
+                
+                item {
+                    OutlinedTextField(
+                        value = calories,
+                        onValueChange = { if (it.all { char -> char.isDigit() }) calories = it },
+                        label = { Text("Calories (kcal)") },
+                        placeholder = { Text("e.g., 350") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        leadingIcon = {
+                            Text("🔥", fontSize = 20.sp)
+                        }
+                    )
+                }
+                
+                item {
+                    OutlinedTextField(
+                        value = protein,
+                        onValueChange = { if (it.all { char -> char.isDigit() }) protein = it },
+                        label = { Text("Protein (g)") },
+                        placeholder = { Text("e.g., 25") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        leadingIcon = {
+                            Text("💪", fontSize = 20.sp)
+                        }
+                    )
+                }
+                
+                item {
+                    OutlinedTextField(
+                        value = carbs,
+                        onValueChange = { if (it.all { char -> char.isDigit() }) carbs = it },
+                        label = { Text("Carbs (g)") },
+                        placeholder = { Text("e.g., 30") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        leadingIcon = {
+                            Text("🌾", fontSize = 20.sp)
+                        }
+                    )
+                }
+                
+                item {
+                    OutlinedTextField(
+                        value = fat,
+                        onValueChange = { if (it.all { char -> char.isDigit() }) fat = it },
+                        label = { Text("Fat (g)") },
+                        placeholder = { Text("e.g., 15") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        leadingIcon = {
+                            Text("🥑", fontSize = 20.sp)
+                        }
+                    )
+                }
+                
+                item {
+                    ExposedDropdownMenuBox(
+                        expanded = expandedMealType,
+                        onExpandedChange = { expandedMealType = it }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedMealType,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Meal Type") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedMealType)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            leadingIcon = {
+                                Text(
+                                    when (selectedMealType) {
+                                        "Breakfast" -> "🍳"
+                                        "Lunch" -> "🍱"
+                                        "Dinner" -> "🍽️"
+                                        "Snack" -> "🍿"
+                                        else -> "🍴"
+                                    },
+                                    fontSize = 20.sp
+                                )
+                            }
+                        )
+                        
+                        ExposedDropdownMenu(
+                            expanded = expandedMealType,
+                            onDismissRequest = { expandedMealType = false }
+                        ) {
+                            mealTypes.forEach { type ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                when (type) {
+                                                    "Breakfast" -> "🍳"
+                                                    "Lunch" -> "🍱"
+                                                    "Dinner" -> "🍽️"
+                                                    "Snack" -> "🍿"
+                                                    else -> "🍴"
+                                                },
+                                                fontSize = 20.sp
+                                            )
+                                            Text(type)
+                                        }
+                                    },
+                                    onClick = {
+                                        selectedMealType = type
+                                        expandedMealType = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (mealName.isNotBlank() && calories.isNotBlank()) {
+                        onSave(
+                            mealName,
+                            calories.toIntOrNull() ?: 0,
+                            protein.toIntOrNull() ?: 0,
+                            carbs.toIntOrNull() ?: 0,
+                            fat.toIntOrNull() ?: 0,
+                            selectedMealType
+                        )
+                    }
+                },
+                enabled = mealName.isNotBlank() && calories.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text("Save Meal")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalorieGoalDialog(
+    currentGoal: Int,
+    currentPeriod: String,
+    onDismiss: () -> Unit,
+    onSave: (Int, String) -> Unit
+) {
+    var goalText by remember { mutableStateOf(currentGoal.toString()) }
+    var selectedPeriod by remember { mutableStateOf(currentPeriod) }
+    val periods = listOf("daily", "monthly", "yearly")
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Set Calorie Goal",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = goalText,
+                    onValueChange = { if (it.all { char -> char.isDigit() }) goalText = it },
+                    label = { Text("Calorie Goal") },
+                    placeholder = { Text("e.g., 2000") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    leadingIcon = {
+                        Text("🎯", fontSize = 20.sp)
+                    },
+                    suffix = { Text("kcal") }
+                )
+                
+                Text(
+                    text = "Period",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    periods.forEach { period ->
+                        FilterChip(
+                            selected = selectedPeriod == period,
+                            onClick = { selectedPeriod = period },
+                            label = {
+                                Text(
+                                    text = period.capitalize(),
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+                
+                Text(
+                    text = "Tip: Set realistic goals based on your activity level",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val goal = goalText.toIntOrNull() ?: currentGoal
+                    onSave(goal, selectedPeriod)
+                },
+                enabled = goalText.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Mint
+                )
+            ) {
+                Text("Save Goal")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+fun String.capitalize(): String {
+    return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }

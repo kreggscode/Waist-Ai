@@ -1,19 +1,49 @@
-# Curve & Fuel - Premium AI Health Coach App
+<div align="center">
 
-A stunning, $1M+ quality Android application for waist-to-hip ratio tracking, calorie management, and AI-powered health coaching. Built with Jetpack Compose and modern Android architecture.
+# 🤖 WaistAI - Your AI-Powered Health Coach
+
+### Track Your Body Metrics • Scan Your Meals • Get AI Insights
+
+[![Get it on Google Play](https://img.shields.io/badge/Get_it_on-Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip)
+
+<img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
+<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
+<img src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="Jetpack Compose" />
+<img src="https://img.shields.io/badge/Material%203-757575?style=for-the-badge&logo=material-design&logoColor=white" alt="Material 3" />
+
+---
+
+**WaistAI** is a premium Android health tracking app that combines waist-to-hip ratio monitoring, intelligent food scanning, and AI-powered health coaching into one beautiful, intuitive experience.
+
+</div>
+
+## ✨ Features
+
+### 📏 **Body Metrics Tracking**
+- **Waist-to-Hip Ratio (WHR) Calculator** - Accurate health risk assessment
+- **Manual Input** - Easy measurement entry with unit toggle (inches/cm)
+- **History Tracking** - Monitor your progress over time with beautiful graphs
+- **Date Filters** - View trends by week, month, or year
+
+### 🍽️ **Smart Food Scanning**
+- **Camera Scanner** - Instantly scan meals and get nutrition data
+- **Receipt Scanner** - Upload grocery receipts for automatic logging
+- **Email Integration** - Forward meal emails for easy tracking
+- **Macro Breakdown** - Detailed protein, carbs, and fat analysis
+
+### 🤖 **AI Health Coach**
+- **Personalized Insights** - Get tailored health recommendations
+- **Risk Assessment** - Understand your health status (Healthy/Moderate/High Risk)
+- **Interactive Chat** - Ask questions and get instant AI responses
+- **Meal Planning** - AI-generated meal plans based on your goals
+
+### 🎨 **Beautiful Design**
+- **Material Design 3** - Modern, polished UI with glass-morphism effects
+- **Dark Mode** - Fully supported for comfortable viewing
+- **Smooth Animations** - Delightful micro-interactions throughout
+- **Intuitive Navigation** - Easy-to-use bottom navigation
 
 ## 🛠️ Tech Stack
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
-  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
-  <img src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpack-compose&logoColor=white" alt="Jetpack Compose" />
-  <img src="https://img.shields.io/badge/Hilt-0091EA?style=for-the-badge&logo=hilt&logoColor=white" alt="Hilt" />
-  <img src="https://img.shields.io/badge/Room-FF6D00?style=for-the-badge&logo=android&logoColor=white" alt="Room" />
-  <img src="https://img.shields.io/badge/Coroutines-00D4AA?style=for-the-badge&logo=kotlin&logoColor=white" alt="Coroutines" />
-  <img src="https://img.shields.io/badge/CameraX-4285F4?style=for-the-badge&logo=android&logoColor=white" alt="CameraX" />
-  <img src="https://img.shields.io/badge/ML%20Kit-FF6D00?style=for-the-badge&logo=firebase&logoColor=white" alt="ML Kit" />
-</p>
 
 ## 🎨 Design Philosophy
 
@@ -364,10 +394,38 @@ spring(
 - [ ] Widget support
 - [ ] Export to CSV/PDF
 
+## 📱 Download
+
+<div align="center">
+
+### Ready to start your health journey?
+
+[![Get it on Google Play](https://img.shields.io/badge/Download_on-Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white&labelColor=34A853)](https://play.google.com/store/apps/details?id=com.kreggscode.waisttohip)
+
+**Also check out our other apps:**
+
+[![More Apps](https://img.shields.io/badge/More_Apps_by_KreggsCode-4285F4?style=for-the-badge&logo=android&logoColor=white)](https://play.google.com/store/apps/dev?id=4822923174061161987)
+
+</div>
+
+## 📧 Contact
+
+For support, feedback, or inquiries:
+
+**Email:** kreg9da@gmail.com
+
 ## 📄 License
 
-Copyright © 2024 KreggsCode. All rights reserved.
+Copyright © 2025 KreggsCode. All rights reserved.
 
 ## 👨‍💻 Developer
 
-Built with ❤️ by KreggsCode
+Built with ❤️ by **KreggsCode**
+
+---
+
+<div align="center">
+
+**If you find WaistAI helpful, please consider rating it on the Play Store! ⭐**
+
+</div>

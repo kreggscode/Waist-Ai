@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaistHip App Icon Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .icon-card {
+            text-align: center;
+        }
+
+        .icon-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1rem;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .icon-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .icon-label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .instructions {
+            background: #f7fafc;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+        }
+
+        .instructions h2 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.5rem;
+            color: #4a5568;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 WaistHip App Icon Generator</h1>
+        <p style="text-align: center; color: #718096; margin-bottom: 2rem;">
+            Beautiful, modern app icons ready for production
+        </p>
+
+        <div class="icon-grid">
+            <div class="icon-card">
+                <div class="icon-wrapper" id="icon1-wrapper">
+                    <canvas id="icon1" width="512" height="512"></canvas>
+                </div>
+                <div class="icon-label">Gradient Style</div>
+                <button class="download-btn" onclick="downloadIcon('icon1', 'waisthip-icon-gradient.png')">
+                    Download PNG
+                </button>
+            </div>
+
+            <div class="icon-card">
+                <div class="icon-wrapper" id="icon2-wrapper">
+                    <canvas id="icon2" width="512" height="512"></canvas>
+                </div>
+                <div class="icon-label">Glassmorphic Style</div>
+                <button class="download-btn" onclick="downloadIcon('icon2', 'waisthip-icon-glass.png')">
+                    Download PNG
+                </button>
+            </div>
+
+            <div class="icon-card">
+                <div class="icon-wrapper" id="icon3-wrapper">
+                    <canvas id="icon3" width="512" height="512"></canvas>
+                </div>
+                <div class="icon-label">Minimalist Style</div>
+                <button class="download-btn" onclick="downloadIcon('icon3', 'waisthip-icon-minimal.png')">
+                    Download PNG
+                </button>
+            </div>
+
+            <div class="icon-card">
+                <div class="icon-wrapper" id="icon4-wrapper">
+                    <canvas id="icon4" width="512" height="512"></canvas>
+                </div>
+                <div class="icon-label">3D Style</div>
+                <button class="download-btn" onclick="downloadIcon('icon4', 'waisthip-icon-3d.png')">
+                    Download PNG
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2>📋 How to Use</h2>
+            <ol>
+                <li>Click "Download PNG" on your favorite icon style</li>
+                <li>The icon will be downloaded as a 512x512 PNG file</li>
+                <li>Use Android Studio's Image Asset Studio to generate all sizes</li>
+                <li>Or use online tools like <strong>makeappicon.com</strong> to generate all required sizes</li>
+                <li>Replace the icons in your <code>res/mipmap-*</code> folders</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Icon 1: Gradient Style
+        function drawIcon1() {
+            const canvas = document.getElementById('icon1');
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#6366F1');
+            gradient.addColorStop(0.5, '#8B5CF6');
+            gradient.addColorStop(1, '#EC4899');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Draw measurement tape icon
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            
+            // Waist circle
+            ctx.beginPath();
+            ctx.arc(256, 200, 80, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Hip circle
+            ctx.beginPath();
+            ctx.arc(256, 320, 100, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Connecting lines
+            ctx.beginPath();
+            ctx.moveTo(176, 200);
+            ctx.lineTo(156, 320);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(336, 200);
+            ctx.lineTo(356, 320);
+            ctx.stroke();
+            
+            // Add measurement marks
+            ctx.lineWidth = 8;
+            for (let i = 0; i < 8; i++) {
+                const angle = (Math.PI * 2 / 8) * i;
+                const x1 = 256 + Math.cos(angle) * 70;
+                const y1 = 200 + Math.sin(angle) * 70;
+                const x2 = 256 + Math.cos(angle) * 90;
+                const y2 = 200 + Math.sin(angle) * 90;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+        }
+
+        // Icon 2: Glassmorphic Style
+        function drawIcon2() {
+            const canvas = document.getElementById('icon2');
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#14B8A6');
+            gradient.addColorStop(1, '#6366F1');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Glass effect
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Draw stylized body shape
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 15;
+            
+            // Upper body (waist)
+            ctx.beginPath();
+            ctx.ellipse(256, 180, 90, 70, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Lower body (hips)
+            ctx.beginPath();
+            ctx.ellipse(256, 320, 110, 80, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Connection
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillRect(200, 220, 112, 70);
+            
+            // Add sparkle effects
+            ctx.fillStyle = 'white';
+            const sparkles = [
+                {x: 150, y: 100, size: 8},
+                {x: 360, y: 130, size: 6},
+                {x: 120, y: 380, size: 7},
+                {x: 390, y: 400, size: 9}
+            ];
+            
+            sparkles.forEach(sparkle => {
+                ctx.beginPath();
+                ctx.arc(sparkle.x, sparkle.y, sparkle.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Icon 3: Minimalist Style
+        function drawIcon3() {
+            const canvas = document.getElementById('icon3');
+            const ctx = canvas.getContext('2d');
+            
+            // Clean white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Simple line art
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#6366F1');
+            gradient.addColorStop(1, '#8B5CF6');
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 25;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Draw abstract body measurement
+            ctx.beginPath();
+            ctx.moveTo(256, 100);
+            ctx.bezierCurveTo(180, 150, 180, 220, 256, 250);
+            ctx.bezierCurveTo(332, 220, 332, 150, 256, 100);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(256, 250);
+            ctx.bezierCurveTo(200, 280, 200, 350, 256, 400);
+            ctx.bezierCurveTo(312, 350, 312, 280, 256, 250);
+            ctx.stroke();
+            
+            // Add measurement indicator
+            ctx.strokeStyle = '#EC4899';
+            ctx.lineWidth = 15;
+            ctx.beginPath();
+            ctx.moveTo(150, 250);
+            ctx.lineTo(362, 250);
+            ctx.stroke();
+            
+            // Arrow heads
+            ctx.beginPath();
+            ctx.moveTo(150, 250);
+            ctx.lineTo(170, 235);
+            ctx.moveTo(150, 250);
+            ctx.lineTo(170, 265);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(362, 250);
+            ctx.lineTo(342, 235);
+            ctx.moveTo(362, 250);
+            ctx.lineTo(342, 265);
+            ctx.stroke();
+        }
+
+        // Icon 4: 3D Style
+        function drawIcon4() {
+            const canvas = document.getElementById('icon4');
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const bgGradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 400);
+            bgGradient.addColorStop(0, '#667eea');
+            bgGradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // 3D effect - shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(256, 420, 120, 30, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Main 3D shape
+            // Top circle (waist) - lighter
+            const topGradient = ctx.createRadialGradient(230, 180, 0, 256, 200, 100);
+            topGradient.addColorStop(0, '#ffffff');
+            topGradient.addColorStop(0.5, '#f0f0f0');
+            topGradient.addColorStop(1, '#d0d0d0');
+            ctx.fillStyle = topGradient;
+            ctx.beginPath();
+            ctx.ellipse(256, 200, 90, 80, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Middle section
+            ctx.fillStyle = '#e0e0e0';
+            ctx.fillRect(180, 200, 152, 100);
+            
+            // Bottom circle (hip) - darker
+            const bottomGradient = ctx.createRadialGradient(280, 320, 0, 256, 320, 120);
+            bottomGradient.addColorStop(0, '#f0f0f0');
+            bottomGradient.addColorStop(0.5, '#d0d0d0');
+            bottomGradient.addColorStop(1, '#b0b0b0');
+            ctx.fillStyle = bottomGradient;
+            ctx.beginPath();
+            ctx.ellipse(256, 320, 110, 90, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(230, 180, 30, 25, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.ellipse(240, 300, 35, 30, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Download function
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Draw all icons on load
+        window.onload = function() {
+            drawIcon1();
+            drawIcon2();
+            drawIcon3();
+            drawIcon4();
+        };
+    </script>
+</body>
+</html>

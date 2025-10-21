@@ -149,19 +149,28 @@ fun ScannerMainScreen(
                             android.util.Log.d("ScannerScreen", "Successfully parsed ${items.size} food items")
                             onImageProcessed(items)
                         } else {
-                            android.util.Log.w("ScannerScreen", "No items parsed, using mock data")
-                            // Fallback to mock data if parsing fails
-                            onImageProcessed(generateMockFoodItems())
+                            android.util.Log.e("ScannerScreen", "No items parsed from AI response")
+                            android.widget.Toast.makeText(
+                                context,
+                                "Could not identify food items. Please try a clearer image.",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
                         }
                     }.onFailure { error ->
                         android.util.Log.e("ScannerScreen", "AI analysis failed: ${error.message}", error)
-                        // Fallback to mock data on error
-                        onImageProcessed(generateMockFoodItems())
+                        android.widget.Toast.makeText(
+                            context,
+                            "AI analysis failed: ${error.message}. Please try again.",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
                     }
                 } catch (e: Exception) {
                     android.util.Log.e("ScannerScreen", "Image processing failed: ${e.message}", e)
-                    // Fallback to mock data on error
-                    onImageProcessed(generateMockFoodItems())
+                    android.widget.Toast.makeText(
+                        context,
+                        "Image processing failed: ${e.message}",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }

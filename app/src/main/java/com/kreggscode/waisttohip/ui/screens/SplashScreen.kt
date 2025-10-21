@@ -141,7 +141,7 @@ fun SplashScreen(
                 
                 // App name with gradient
                 Text(
-                    text = "Curve & Fuel",
+                    text = "WaistAI",
                     style = MaterialTheme.typography.displayLarge.copy(
                         brush = Brush.linearGradient(
                             colors = listOf(Coral, Lavender, Mint)
